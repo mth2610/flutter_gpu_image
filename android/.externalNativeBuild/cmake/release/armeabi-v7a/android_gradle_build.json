@@ -1,0 +1,40 @@
+{
+  "stringTable": {
+    "0": "/Users/macos/Desktop/Desktop/flutter_apps/flutter_gpu_image/android/.externalNativeBuild/cmake/release/armeabi-v7a",
+    "1": "--target=armv7-none-linux-androideabi16 --gcc-toolchain=/Users/macos/Library/Android/sdk/ndk-bundle/toolchains/llvm/prebuilt/darwin-x86_64 --sysroot=/Users/macos/Library/Android/sdk/ndk-bundle/toolchains/llvm/prebuilt/darwin-x86_64/sysroot -Dyuv_decoder_EXPORTS -g -DANDROID -fdata-sections -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -mfpu=vfpv3-d16 -fno-addrsig -march=armv7-a -mthumb -Wa,--noexecstack -Wformat -Werror=format-security -Oz -DNDEBUG -fPIC"
+  },
+  "buildFiles": [
+    "/Users/macos/Library/Android/sdk/ndk-bundle/build/cmake/android.toolchain.cmake",
+    "/Users/macos/Desktop/Desktop/flutter_apps/flutter_gpu_image/android/src/main/cpp/CMakeLists.txt",
+    "/Users/macos/Library/Android/sdk/ndk-bundle/build/cmake/platforms.cmake"
+  ],
+  "cleanCommands": [
+    "/Users/macos/Library/Android/sdk/cmake/3.10.2.4988404/bin/cmake --build /Users/macos/Desktop/Desktop/flutter_apps/flutter_gpu_image/android/.externalNativeBuild/cmake/release/armeabi-v7a --target clean"
+  ],
+  "libraries": {
+    "yuv-decoder-Release-armeabi-v7a": {
+      "buildCommand": "/Users/macos/Library/Android/sdk/cmake/3.10.2.4988404/bin/cmake --build /Users/macos/Desktop/Desktop/flutter_apps/flutter_gpu_image/android/.externalNativeBuild/cmake/release/armeabi-v7a --target yuv-decoder",
+      "buildType": "release",
+      "toolchain": "1411561824",
+      "abi": "armeabi-v7a",
+      "artifactName": "yuv-decoder",
+      "files": [
+        {
+          "src": "/Users/macos/Desktop/Desktop/flutter_apps/flutter_gpu_image/android/src/main/cpp/yuv-decoder.c",
+          "flagsOrdinal": 1,
+          "workingDirectoryOrdinal": 0
+        }
+      ],
+      "output": "/Users/macos/Desktop/Desktop/flutter_apps/flutter_gpu_image/example/build/flutter_gpu_image/intermediates/cmake/release/obj/armeabi-v7a/libyuv-decoder.so"
+    }
+  },
+  "toolchains": {
+    "1411561824": {
+      "cCompilerExecutable": "/Users/macos/Library/Android/sdk/ndk-bundle/toolchains/llvm/prebuilt/darwin-x86_64/bin/clang"
+    }
+  },
+  "cFileExtensions": [
+    "c"
+  ],
+  "cppFileExtensions": []
+}

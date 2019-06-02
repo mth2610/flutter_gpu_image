@@ -1,0 +1,3 @@
+/Users/macos/Desktop/Desktop/flutter_apps/flutter_gpu_image/android/.externalNativeBuild/cmake/release/x86/CMakeFiles/rebuild_cache.dir
+/Users/macos/Desktop/Desktop/flutter_apps/flutter_gpu_image/android/.externalNativeBuild/cmake/release/x86/CMakeFiles/edit_cache.dir
+/Users/macos/Desktop/Desktop/flutter_apps/flutter_gpu_image/android/.externalNativeBuild/cmake/release/x86/CMakeFiles/yuv-decoder.dir

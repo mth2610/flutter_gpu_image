@@ -1,0 +1,7 @@
+[
+{
+  "directory": "/Users/macos/Desktop/Desktop/flutter_apps/flutter_gpu_image/android/.externalNativeBuild/cmake/release/armeabi-v7a",
+  "command": "/Users/macos/Library/Android/sdk/ndk-bundle/toolchains/llvm/prebuilt/darwin-x86_64/bin/clang --target=armv7-none-linux-androideabi16 --gcc-toolchain=/Users/macos/Library/Android/sdk/ndk-bundle/toolchains/llvm/prebuilt/darwin-x86_64 --sysroot=/Users/macos/Library/Android/sdk/ndk-bundle/toolchains/llvm/prebuilt/darwin-x86_64/sysroot -Dyuv_decoder_EXPORTS  -g -DANDROID -fdata-sections -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -mfpu=vfpv3-d16 -fno-addrsig -march=armv7-a -mthumb -Wa,--noexecstack -Wformat -Werror=format-security  -Oz -DNDEBUG  -fPIC   -o CMakeFiles/yuv-decoder.dir/yuv-decoder.c.o   -c /Users/macos/Desktop/Desktop/flutter_apps/flutter_gpu_image/android/src/main/cpp/yuv-decoder.c",
+  "file": "/Users/macos/Desktop/Desktop/flutter_apps/flutter_gpu_image/android/src/main/cpp/yuv-decoder.c"
+}
+]
