@@ -64,7 +64,7 @@ public class GPUImage {
     static final int SURFACE_TYPE_TEXTURE_VIEW = 1;
 
     private final Context context;
-    static private SurfaceTexture surfaceTexture;
+    private static SurfaceTexture surfaceTexture;
     private final GPUImageRenderer renderer;
     private int surfaceType = SURFACE_TYPE_SURFACE_VIEW;
     private GLSurfaceView glSurfaceView;
@@ -72,7 +72,6 @@ public class GPUImage {
     private GPUImageFilter filter;
     private Bitmap currentBitmap;
     private ScaleType scaleType = ScaleType.CENTER_CROP;
-
     /**
      * Instantiates a new GPUImage object.
      *
@@ -520,15 +519,16 @@ public class GPUImage {
         private void saveImage(final String folderName, final String fileName, final Bitmap image) {
             //File path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
             File file = new File( folderName + "/" + fileName);
-            if (file.exists()) file.delete();
-            //FileOutputStream out = new FileOutputStream(file);
+            //if (file.exists()) file.delete();
+
             try {
+                FileOutputStream out = new FileOutputStream(file);
                 //file.getParentFile().mkdirs();
-                image.compress(CompressFormat.JPEG, 80, new FileOutputStream(file));
+                image.compress(CompressFormat.JPEG, 100, out);
                 ExifInterface outputExif = new ExifInterface(file.getAbsolutePath());
                 //Log.i("inputOri", String.valueOf(inputExif.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_UNDEFINED)));
-                outputExif.setAttribute(ExifInterface.TAG_ORIENTATION, inputExif.getAttribute(ExifInterface.TAG_ORIENTATION));
-                outputExif.saveAttributes();
+               outputExif.setAttribute(ExifInterface.TAG_ORIENTATION, inputExif.getAttribute(ExifInterface.TAG_ORIENTATION));
+               outputExif.saveAttributes();
 //                MediaScannerConnection.scanFile(context,
 //                        new String[]{
 //                                file.toString()

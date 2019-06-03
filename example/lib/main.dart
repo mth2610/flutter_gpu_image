@@ -1,9 +1,6 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'dart:async';
-
-import 'package:flutter/services.dart';
 import 'package:flutter_gpu_image/flutter_gpu_image.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:path_provider/path_provider.dart';
@@ -29,7 +26,43 @@ class _MyAppState extends State<MyApp> {
     "AchromatomalyFilter",
     "TritanopiaFilter",
     "SketchFilter",
-    "ColorFilter"
+    "ColorFilter",
+    "BilateralBlurFilter",
+    "BulgeDistortionFilter",
+    "ColorInvertFilter",
+    "ContrastFilter",
+    //"EmbossFilter",
+    "FalseColorFilter",
+    "HazeFilter",
+    "KuwaharaFilter",
+    "PixelationFilter",
+    "PosterizeFilter",
+    //"SepiaToneFilter",
+    "SharpenFilter",
+    //new com.mth2610.gpu_image.filter.GPUImageSketchFilter2",
+    //"SmoothToonFilter",
+    //"SolarizeFilter",
+    "SwirlFilter",
+    "ToonFilter",
+    "VignetteFilter",
+    "ZoomBlurFilter",
+    "IF1977Filter",
+    "IFAmaroFilter",
+    "IFBrannanFilter",
+    "IFEarlybirdFilter",
+    "IFHefeFilter",
+    "IFHudsonFilter",
+    "IFInkwellFilter",
+    "IFLomoFilter",
+    "IFLordKelvinFilter",
+    "IFNashvilleFilter",
+    "IFRiseFilter",
+    "IFSierraFilter",
+    "IFSutroFilter",
+    "IFToasterFilter",
+    "IFValenciaFilter",
+    "IFWaldenFilter",
+    "IFXprollFilter",
   ];
 
   FlutterGpuImage _gpuImage = FlutterGpuImage();
@@ -43,13 +76,11 @@ class _MyAppState extends State<MyApp> {
   void initState() {
     _gpuImage.init().then((value){
       _textureId = value;
-      print("Texture id **********");
-      print(_textureId);
     });
     super.initState();
-    for(int i=0; i<_filtersName.length; i++){
+    for(var element in GPU_FILTERS.values){
       _filterButtons.add(
-        _buildFilterButton(i)
+        _buildFilterButton(element)
       );
     }
   }
@@ -93,20 +124,20 @@ class _MyAppState extends State<MyApp> {
 
   Widget _buildPickedImage(){
     return _proceessedImage != null
+    // ? Container(
+    //     height: 300.0,
+    //     child: Texture(textureId: _textureId) ,
+    //   )
     ? Container(
-        height: 300.0,
-        child: Texture(textureId: _textureId) ,
-      )
-    // Container(
-    //   margin: EdgeInsets.all(16),
-    //   height: 300.0,
-    //   decoration: BoxDecoration(
-    //       border: Border.all(width: 1),
-          // DecorationImage(
-          //   image: FileImage(File(_proceessedImage)),
-          // )
-    //     )
-    // )
+      margin: EdgeInsets.all(16),
+      height: 300.0,
+      decoration: BoxDecoration(
+          border: Border.all(width: 1),
+          image: DecorationImage(
+            image: FileImage(File(_proceessedImage)),
+          )
+        )
+    )
     : Container(
       margin: EdgeInsets.all(16),
       height: 300.0,
@@ -160,13 +191,13 @@ class _MyAppState extends State<MyApp> {
     );
   }
 
-   Widget _buildFilterButton(int filter){
+   Widget _buildFilterButton(GPU_FILTERS filter){
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16.0),
       child: RaisedButton(
         color: Colors.blue,
         textColor: Colors.white,
-        child: Text("${_filtersName[filter]}"),
+        child: Text("${filter.toString()}"),
         onPressed: ()async{
           setState(() {
             _isSaving = true;
@@ -174,11 +205,12 @@ class _MyAppState extends State<MyApp> {
           if(_srcImage!=null){
             Directory tempDir = await getTemporaryDirectory();
             String tempPath = tempDir.path; 
-            _proceessedImage = await _gpuImage.process(
+            _proceessedImage = await _gpuImage.applyFilterAndSaveToFile(
               inputFilePath: _srcImage.path,
               outputFilePath: tempDir.path,
-              filter: filter
+              filter: filter.index
             );
+            print(_proceessedImage);
             setState(() {
               _isSaving = false;
             });

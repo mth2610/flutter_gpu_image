@@ -47,6 +47,7 @@ public class PixelBuffer {
     private EGLConfig eglConfig;
     private EGLContext eglContext;
     private EGLSurface eglSurface;
+    private EGLSurface eglWindowSurface;
     private GL10 gl10;
 
     private String mThreadOwner;
@@ -77,11 +78,11 @@ public class PixelBuffer {
                 EGL10.EGL_NONE
         };
         eglContext = egl10.eglCreateContext(eglDisplay, eglConfig, EGL_NO_CONTEXT, attrib_list);
-
-        //eglSurface = egl10.eglCreatePbufferSurface(eglDisplay, eglConfig, attribList);
+        eglSurface = egl10.eglCreatePbufferSurface(eglDisplay, eglConfig, attribList);
 
         mSurface.setDefaultBufferSize(width, height);
-        eglSurface = egl10.eglCreateWindowSurface(eglDisplay, eglConfig, mSurface, null);
+
+        //eglWindowSurface = egl10.eglCreateWindowSurface(eglDisplay, eglConfig, mSurface, null);
 
         egl10.eglMakeCurrent(eglDisplay, eglSurface, eglSurface, eglContext);
         gl10 = (GL10) eglContext.getGL();
