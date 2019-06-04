@@ -165,7 +165,7 @@ public class FlutterGpuImagePlugin implements MethodCallHandler {
             GPUImage2 gpuImage = new GPUImage2(mRegistrar.context());
             GLTextureView2 glTextureView = new GLTextureView2(mRegistrar.context(), surfaceTexture);
             gpuImage.setGLTextureView(glTextureView);
-            
+
             String inputFilePath = call.argument("inputFilePath");
             String outputFilePath = call.argument("outputFilePath");
             int filter = call.argument("filter");
