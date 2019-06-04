@@ -177,7 +177,7 @@ public class FlutterGpuImagePlugin implements MethodCallHandler {
                 //ExifInterface inputExif = new ExifInterface(inputFilePath);
                 gpuImage.setImage(inputBitmap);
                 gpuImage.setFilter(ORTHER_FILTERS[filter]);
-                gpuImage.getBitmapWithFilterApplied();
+                //gpuImage.getBitmapWithFilterApplied();
                 //gpuImage.getBitmapWithFilterApplied(inputBitmap);
                 result.success("success");
                 //gpuImage.saveToPictures(inputBitmap, outputFilePath, outputFileName, null, result, inputExif);
