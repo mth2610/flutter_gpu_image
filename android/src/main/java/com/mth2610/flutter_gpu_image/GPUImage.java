@@ -36,6 +36,7 @@ import android.os.AsyncTask;
 import android.os.Environment;
 import android.os.Handler;
 import android.provider.MediaStore;
+import android.util.Log;
 import android.view.Display;
 import android.view.WindowManager;
 
@@ -150,11 +151,16 @@ public class GPUImage {
      */
     public void requestRender() {
         if (surfaceType == SURFACE_TYPE_SURFACE_VIEW) {
+            Log.i("SurfaceView", "SurfaceView");
             if (glSurfaceView != null) {
+                Log.i("SurfaceView1", "SurfaceView1");
                 glSurfaceView.requestRender();
             }
+
         } else if (surfaceType == SURFACE_TYPE_TEXTURE_VIEW) {
+            Log.i("TextureView", "TextureView");
             if (glTextureView != null) {
+                Log.i("TextureView", "TextureView");
                 glTextureView.requestRender();
             }
         }
