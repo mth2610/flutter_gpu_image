@@ -164,7 +164,7 @@ public class FlutterGpuImagePlugin implements MethodCallHandler {
         }else{
             GPUImage2 gpuImage = new GPUImage2(mRegistrar.context());
             GLTextureView2 glTextureView = new GLTextureView2(mRegistrar.context(), surfaceTexture);
-            gpuImage.setGLTextureView(glTextureView);
+
 
             String inputFilePath = call.argument("inputFilePath");
             String outputFilePath = call.argument("outputFilePath");
@@ -174,8 +174,11 @@ public class FlutterGpuImagePlugin implements MethodCallHandler {
 
             try {
                 //ExifInterface inputExif = new ExifInterface(inputFilePath);
-                gpuImage.setImage(inputBitmap);
+                surfaceTexture.setDefaultBufferSize(inputBitmap.getWidth(), inputBitmap.getHeight());
                 gpuImage.setFilter(ORTHER_FILTERS[filter]);
+                gpuImage.setImage(inputBitmap);
+                gpuImage.setGLTextureView(glTextureView);
+
                 //gpuImage.getBitmapWithFilterApplied();
                 //gpuImage.getBitmapWithFilterApplied(inputBitmap);
                 result.success("success");
