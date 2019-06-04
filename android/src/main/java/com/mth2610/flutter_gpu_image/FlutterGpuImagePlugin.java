@@ -19,6 +19,9 @@ import com.mth2610.flutter_gpu_image.filter.*;
 import com.mth2610.flutter_gpu_image.instagram_filter.*;
 
 import android.graphics.SurfaceTexture;
+
+import java.util.List;
+import java.util.ArrayList;
 import java.util.Map;
 
 import io.flutter.plugin.common.MethodCall;
@@ -157,6 +160,33 @@ public class FlutterGpuImagePlugin implements MethodCallHandler {
             Bitmap inputBitmap = BitmapFactory.decodeFile(inputFilePath);
             String outputFileName = String.valueOf(System.currentTimeMillis()) + ".png";
             gpuImage.setFilter(FILTERS[filter]);
+            try {
+                ExifInterface inputExif = new ExifInterface(inputFilePath);
+                gpuImage.saveToPictures(inputBitmap, outputFilePath, outputFileName, null, result, inputExif);
+            }catch (Exception e){
+                result.error("error", "error", e.toString());
+                inputBitmap.recycle();
+            }catch (Error e){
+                result.error("error", "error", e.toString());
+                inputBitmap.recycle();
+            }
+            Log.i("test4", "test4");
+        }
+    }else if(call.method.equals("applyMultiFiltersAndSaveToFile")) {
+        if(isInit!=true){
+            result.error("Process failed", "Not initilized", "Not initilized");
+        }else{
+            gpuImage = new GPUImage(mRegistrar.context(), surfaceTexture);
+            String inputFilePath = call.argument("inputFilePath");
+            String outputFilePath = call.argument("outputFilePath");
+            int[] filters = call.argument("filters");
+            Bitmap inputBitmap = BitmapFactory.decodeFile(inputFilePath);
+            String outputFileName = String.valueOf(System.currentTimeMillis()) + ".png";
+            List<GPUImageFilter> gpuImageFilters = new ArrayList<GPUImageFilter>();
+            gpuImageFilters.add(FILTERS[1]);
+            gpuImageFilters.add(FILTERS[2]);
+            GPUImageFilter gPUImageGroupFilter = new GPUImageFilterGroup(gpuImageFilters);
+            gpuImage.setFilter(gPUImageGroupFilter);
             try {
                 ExifInterface inputExif = new ExifInterface(inputFilePath);
                 gpuImage.saveToPictures(inputBitmap, outputFilePath, outputFileName, null, result, inputExif);
