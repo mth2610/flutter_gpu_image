@@ -53,18 +53,21 @@ public class GLTextureView2 extends TextureView implements TextureView.SurfaceTe
         super(context);
         this.mSurface = surfaceTexture;
         initialize(context);
+        initGL();
     }
 
     public GLTextureView2(Context context, AttributeSet attrs, SurfaceTexture surfaceTexture) {
         super(context, attrs);
         this.mSurface = surfaceTexture;
         initialize(context);
+        initGL();
     }
 
     public GLTextureView2(Context context, AttributeSet attrs, int defStyleAttr, SurfaceTexture surfaceTexture) {
         super(context, attrs, defStyleAttr);
         this.mSurface = surfaceTexture;
         initialize(context);
+        initGL();
     }
 
     public synchronized void setRenderer(GLSurfaceView.Renderer renderer){
