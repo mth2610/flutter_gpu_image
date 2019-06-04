@@ -183,8 +183,11 @@ public class FlutterGpuImagePlugin implements MethodCallHandler {
             Bitmap inputBitmap = BitmapFactory.decodeFile(inputFilePath);
             String outputFileName = String.valueOf(System.currentTimeMillis()) + ".png";
             List<GPUImageFilter> gpuImageFilters = new ArrayList<GPUImageFilter>();
-            gpuImageFilters.add(FILTERS[1]);
-            gpuImageFilters.add(FILTERS[2]);
+
+            for(int i=0; i <filters.size(); i++){
+                gpuImageFilters.add(FILTERS[(int) filters.get(i)]);
+            }
+
             GPUImageFilter gPUImageGroupFilter = new GPUImageFilterGroup(gpuImageFilters);
             gpuImage.setFilter(gPUImageGroupFilter);
             try {
