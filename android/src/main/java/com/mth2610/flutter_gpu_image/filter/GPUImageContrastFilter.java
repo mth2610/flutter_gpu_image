@@ -15,6 +15,7 @@
  */
 
 package com.mth2610.flutter_gpu_image.filter;
+import com.mth2610.flutter_gpu_image.base_filters.GPUImageFilter;
 
 import android.opengl.GLES20;
 

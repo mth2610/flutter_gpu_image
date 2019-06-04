@@ -1,7 +1,7 @@
 package com.mth2610.flutter_gpu_image.filter;
 
 import android.opengl.GLES20;
-
+import com.mth2610.flutter_gpu_image.base_filters.GPUImageFilter;
 public class GPUImageSolarizeFilter extends GPUImageFilter {
     public static final String SOLATIZE_FRAGMENT_SHADER = "" +
             "varying highp vec2 textureCoordinate;\n" +

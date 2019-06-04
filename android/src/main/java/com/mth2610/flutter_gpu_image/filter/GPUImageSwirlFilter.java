@@ -18,7 +18,7 @@ package com.mth2610.flutter_gpu_image.filter;
 
 import android.graphics.PointF;
 import android.opengl.GLES20;
-
+import com.mth2610.flutter_gpu_image.base_filters.GPUImageFilter;
 /**
  * Creates a swirl distortion on the image.
  */

@@ -35,6 +35,9 @@ enum GPU_FILTERS{
     Toon,
     Vignette,
     ZoomBlur,
+    BoxBlur,
+    GaussianBlur,
+
     _1977,
     Amaro,
     Brannan,

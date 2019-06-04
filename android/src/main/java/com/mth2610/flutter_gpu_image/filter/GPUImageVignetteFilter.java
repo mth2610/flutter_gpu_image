@@ -18,7 +18,7 @@ package com.mth2610.flutter_gpu_image.filter;
 
 import android.graphics.PointF;
 import android.opengl.GLES20;
-
+import com.mth2610.flutter_gpu_image.base_filters.GPUImageFilter;
 /**
  * Performs a vignetting effect, fading out the image at the edges
  * x:

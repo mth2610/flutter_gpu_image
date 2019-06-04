@@ -47,10 +47,10 @@ import java.io.InputStream;
 import java.net.URL;
 import java.util.List;
 
-import com.mth2610.flutter_gpu_image.filter.GPUImageFilter;
+import com.mth2610.flutter_gpu_image.base_filters.GPUImageFilter;
+
 import com.mth2610.flutter_gpu_image.util.Rotation;
 
-import io.flutter.plugin.common.MethodChannel;
 
 /**
  * The main accessor for GPUImage functionality. This class helps to do common

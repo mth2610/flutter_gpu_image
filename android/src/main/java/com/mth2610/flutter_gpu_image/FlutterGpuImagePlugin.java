@@ -1,28 +1,18 @@
 package com.mth2610.flutter_gpu_image;
-//import com.mth2610.flutter_gpu_image.filter.GPUImageFilter;
-//import com.mth2610.flutter_gpu_image.filter.GPUImageGrayscaleFilter;
-//import com.mth2610.flutter_gpu_image.filter.GPUImageBokehFilter;
-//import com.mth2610.flutter_gpu_image.filter.GPUImageGlitchFilter;
-//import com.mth2610.flutter_gpu_image.filter.GPUImageVHSFilter;
-//import com.mth2610.flutter_gpu_image.filter.GPUImageDeuteranomalyFilter;
-//import com.mth2610.flutter_gpu_image.filter.GPUImageProtanopiaFilter;
-//import com.mth2610.flutter_gpu_image.filter.GPUImageProtanomalyFilter;
-//import com.mth2610.flutter_gpu_image.filter.GPUImageDeuteranopiaFilter;
-//import com.mth2610.flutter_gpu_image.filter.GPUImageTritanomalyFilter;
-//import com.mth2610.flutter_gpu_image.filter.GPUImageAchromatopsiaFilter;
-//import com.mth2610.flutter_gpu_image.filter.GPUImageAchromatomalyFilter;
-//import com.mth2610.flutter_gpu_image.filter.GPUImageTritanopiaFilter;
-//import com.mth2610.flutter_gpu_image.filter.GPUImageSketchFilter;
-//import com.mth2610.flutter_gpu_image.filter.GPUImageWaterColorFilter;
+
+import com.mth2610.flutter_gpu_image.base_filters.GPUImageFilter;
+import com.mth2610.flutter_gpu_image.base_filters.GPUImageFilterGroup;
 
 import com.mth2610.flutter_gpu_image.filter.*;
-import com.mth2610.flutter_gpu_image.instagram_filter.*;
+import com.mth2610.flutter_gpu_image.instagram_filters.*;
+import com.mth2610.flutter_gpu_image.blind_filters.*;
+import com.mth2610.flutter_gpu_image.art_filters.*;
+import com.mth2610.flutter_gpu_image.blur_filters.*;
 
 import android.graphics.SurfaceTexture;
 
 import java.util.List;
 import java.util.ArrayList;
-import java.util.Map;
 
 import io.flutter.plugin.common.MethodCall;
 import io.flutter.plugin.common.MethodChannel;
@@ -31,8 +21,6 @@ import io.flutter.plugin.common.MethodChannel.Result;
 import io.flutter.plugin.common.PluginRegistry.Registrar;
 
 import io.flutter.view.TextureRegistry;
-import android.view.View;
-import android.opengl.GLSurfaceView;
 
 import android.media.ExifInterface;
 
@@ -53,11 +41,12 @@ public class FlutterGpuImagePlugin implements MethodCallHandler {
     private GPUImage gpuImage;
     private boolean isInit = false;
 
-    private GPUImageFilter[] FILTERS;
+    private GPUImageFilter[] ORTHER_FILTERS;
     /** Plugin registration. */
     public FlutterGpuImagePlugin(Registrar registrar) {
         this.mRegistrar = registrar;
-        this.FILTERS = new GPUImageFilter[]{
+        this.ORTHER_FILTERS = new GPUImageFilter[]{
+
                 new GPUImageBokehFilter(),
                 new GPUImageGlitchFilter(),
                 new GPUImageVHSFilter(),
@@ -69,6 +58,7 @@ public class FlutterGpuImagePlugin implements MethodCallHandler {
                 new GPUImageAchromatopsiaFilter(),
                 new GPUImageAchromatomalyFilter(),
                 new GPUImageTritanopiaFilter(),
+
                 new GPUImageSketchFilter(),
                 new GPUImageWaterColorFilter(),
                 new GPUImageBilateralBlurFilter(),
@@ -90,6 +80,9 @@ public class FlutterGpuImagePlugin implements MethodCallHandler {
                 new GPUImageToonFilter(),
                 new GPUImageVignetteFilter(),
                 new GPUImageZoomBlurFilter(),
+                new GPUImageBoxBlurFilter(),
+                new GPUImageGaussianBlurFilter(),
+
                 new IF1977Filter(registrar.context()),
                 new IFAmaroFilter(registrar.context()),
                 new IFBrannanFilter(registrar.context()),
@@ -134,7 +127,7 @@ public class FlutterGpuImagePlugin implements MethodCallHandler {
             int filter = call.argument("filter");
             Bitmap inputBitmap = BitmapFactory.decodeFile(inputFilePath);
             String outputFileName = String.valueOf(System.currentTimeMillis()) + ".png";
-            gpuImage.setFilter(FILTERS[filter]);
+            gpuImage.setFilter(ORTHER_FILTERS[filter]);
             try {
                 //ExifInterface inputExif = new ExifInterface(inputFilePath);
                 //gpuImage.setImage(inputBitmap);
@@ -159,7 +152,7 @@ public class FlutterGpuImagePlugin implements MethodCallHandler {
             int filter = call.argument("filter");
             Bitmap inputBitmap = BitmapFactory.decodeFile(inputFilePath);
             String outputFileName = String.valueOf(System.currentTimeMillis()) + ".png";
-            gpuImage.setFilter(FILTERS[filter]);
+            gpuImage.setFilter(ORTHER_FILTERS[filter]);
             try {
                 ExifInterface inputExif = new ExifInterface(inputFilePath);
                 gpuImage.saveToPictures(inputBitmap, outputFilePath, outputFileName, null, result, inputExif);
@@ -185,7 +178,7 @@ public class FlutterGpuImagePlugin implements MethodCallHandler {
             List<GPUImageFilter> gpuImageFilters = new ArrayList<GPUImageFilter>();
 
             for(int i=0; i <filters.size(); i++){
-                gpuImageFilters.add(FILTERS[(int) filters.get(i)]);
+                gpuImageFilters.add(ORTHER_FILTERS[(int) filters.get(i)]);
             }
 
             GPUImageFilter gPUImageGroupFilter = new GPUImageFilterGroup(gpuImageFilters);

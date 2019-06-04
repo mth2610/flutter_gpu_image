@@ -17,7 +17,7 @@
 package com.mth2610.flutter_gpu_image.filter;
 
 import android.opengl.GLES20;
-
+import com.mth2610.flutter_gpu_image.base_filters.GPUImage3x3TextureSamplingFilter;
 /**
  * This uses Sobel edge detection to place a black border around objects,
  * and then it quantizes the colors present in the image to give a cartoon-like quality to the image.

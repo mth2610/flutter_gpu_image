@@ -36,7 +36,7 @@ import java.util.Queue;
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
-import com.mth2610.flutter_gpu_image.filter.GPUImageFilter;
+import com.mth2610.flutter_gpu_image.base_filters.GPUImageFilter;
 import com.mth2610.flutter_gpu_image.util.OpenGlUtils;
 import com.mth2610.flutter_gpu_image.util.Rotation;
 import com.mth2610.flutter_gpu_image.util.TextureRotationUtil;

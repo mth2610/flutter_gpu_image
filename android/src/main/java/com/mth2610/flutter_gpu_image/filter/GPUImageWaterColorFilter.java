@@ -1,6 +1,8 @@
 package com.mth2610.flutter_gpu_image.filter;
 
 //https://www.shadertoy.com/view/4lV3RG
+import com.mth2610.flutter_gpu_image.base_filters.GPUImage3x3TextureSamplingFilter2;
+
 public class GPUImageWaterColorFilter extends GPUImage3x3TextureSamplingFilter2  {
     public static final String FRAGMENT_SHADER = "" +
             "precision highp float;" +
