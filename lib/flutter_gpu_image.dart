@@ -83,7 +83,7 @@ class FlutterGpuImage {
   }
 
   Future<String> applyMultiFiltersAndSaveToFile({String inputFilePath, String outputFilePath, List<int> filters}) async {
-    String outPutFilePath = await _channel.invokeMethod('applyFilterAndSaveToFile', {
+    String outPutFilePath = await _channel.invokeMethod('applyMultiFiltersAndSaveToFile', {
       'inputFilePath': inputFilePath,
       'outputFilePath': outputFilePath,
       'filter': filters,
