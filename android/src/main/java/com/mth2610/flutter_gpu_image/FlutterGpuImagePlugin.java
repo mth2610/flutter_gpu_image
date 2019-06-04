@@ -28,11 +28,50 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.util.Log;
 
-// https://www.shadertoy.com/view/XdB3zV
-// https://www.shadertoy.com/view/MdSGRW
-// https://www.shadertoy.com/view/XsXGDX
-// https://www.shadertoy.com/view/XdfXRB
-// https://www.shadertoy.com/view/4lV3RG
+//Hexagon
+//https://www.shadertoy.com/view/XlKyRz
+
+//Line filter
+//https://www.shadertoy.com/view/XlXGzf
+
+//Rain drop
+//https://www.shadertoy.com/view/MlfBWr
+
+//Super resolution
+//https://www.shadertoy.com/view/ltsczl
+
+//Mesh filter
+//https://www.shadertoy.com/view/ldV3Wc
+
+//Low poly
+//https://www.shadertoy.com/view/llGGz3
+
+//Notebook
+//https://www.shadertoy.com/view/XtVGD1
+
+//Handdraw
+//https://www.shadertoy.com/view/MsSGD1
+
+//Radial blur
+//https://www.shadertoy.com/view/4sfGRn
+
+//ballpoint Sketch
+//https://www.shadertoy.com/view/ldtcWS
+
+//Money Sketch
+//https://www.shadertoy.com/view/XlsXDN
+
+//Monitor Glicht
+//https://www.shadertoy.com/view/ltSSWV
+
+// Sketch book color
+//https://www.shadertoy.com/view/ldlcWs
+
+//Fade-in effect
+//https://www.shadertoy.com/view/MlcSz2
+
+//Glitch
+//https://www.shadertoy.com/view/Md3cWN
 
 /** FlutterGpuImagePlugin */
 public class FlutterGpuImagePlugin implements MethodCallHandler {
@@ -115,6 +154,8 @@ public class FlutterGpuImagePlugin implements MethodCallHandler {
         TextureRegistry.SurfaceTextureEntry entry = mRegistrar.textures().createSurfaceTexture();
         this.surfaceTexture = entry.surfaceTexture();
         //this.gpuImage = new GPUImage(mRegistrar.context(), surfaceTexture);
+
+
         this.isInit = true;
         result.success(entry.id());
     }else if(call.method.equals("applyFilter")) {
@@ -122,16 +163,23 @@ public class FlutterGpuImagePlugin implements MethodCallHandler {
             result.error("Process failed", "Not initilized", "Not initilized");
         }else{
             gpuImage = new GPUImage(mRegistrar.context(), surfaceTexture);
+            GLTextureView glTextureView = new GLTextureView(mRegistrar.context(), surfaceTexture);
+            gpuImage.setGLTextureView(glTextureView);
+
+
             String inputFilePath = call.argument("inputFilePath");
             String outputFilePath = call.argument("outputFilePath");
             int filter = call.argument("filter");
             Bitmap inputBitmap = BitmapFactory.decodeFile(inputFilePath);
             String outputFileName = String.valueOf(System.currentTimeMillis()) + ".png";
-            gpuImage.setFilter(ORTHER_FILTERS[filter]);
+
+
+
             try {
                 //ExifInterface inputExif = new ExifInterface(inputFilePath);
-                //gpuImage.setImage(inputBitmap);
-                gpuImage.getBitmapWithFilterApplied(inputBitmap);
+                gpuImage.setImage(inputBitmap);
+                gpuImage.setFilter(ORTHER_FILTERS[filter]);
+                //gpuImage.getBitmapWithFilterApplied(inputBitmap);
                 result.success("success");
                 //gpuImage.saveToPictures(inputBitmap, outputFilePath, outputFileName, null, result, inputExif);
             }catch (Exception e){

@@ -97,6 +97,12 @@ public class GLTextureView extends TextureView
         init();
     }
 
+    public GLTextureView(Context context, SurfaceTexture surfaceTexture) {
+        super(context);
+        this.surfaceTexture = surfaceTexture;
+        init();
+    }
+
     /**
      * Standard View constructor. In order to render something, you
      * must call {@link #setRenderer} to register a renderer.
@@ -234,9 +240,13 @@ public class GLTextureView extends TextureView
         if (eglContextFactory == null) {
             eglContextFactory = new DefaultContextFactory();
         }
+//        if (eglWindowSurfaceFactory == null) {
+//            eglWindowSurfaceFactory = new DefaultWindowSurfaceFactory();
+//        }
         if (eglWindowSurfaceFactory == null) {
-            eglWindowSurfaceFactory = new DefaultWindowSurfaceFactory();
+            eglWindowSurfaceFactory = new DefaultWindowSurfaceFactory(surfaceTexture);
         }
+
         this.renderer = renderer;
         glThread = new GLThread(mThisWeakRef);
         glThread.start();
@@ -731,12 +741,27 @@ public class GLTextureView extends TextureView
     }
 
     private static class DefaultWindowSurfaceFactory implements EGLWindowSurfaceFactory {
+        SurfaceTexture surfaceTexture;
+
+        private DefaultWindowSurfaceFactory(){
+
+        }
+
+        private DefaultWindowSurfaceFactory(SurfaceTexture surfaceTexture){
+            this.surfaceTexture =  surfaceTexture;
+        }
 
         public EGLSurface createWindowSurface(EGL10 egl, EGLDisplay display, EGLConfig config,
                                               Object nativeWindow) {
             EGLSurface result = null;
             try {
-                result = egl.eglCreateWindowSurface(display, config, nativeWindow, null);
+                //result = egl.eglCreateWindowSurface(display, config, nativeWindow, null);
+                if(surfaceTexture!=null){
+                    result = egl.eglCreateWindowSurface(display, config, surfaceTexture, null);
+                }else{
+                    result = egl.eglCreateWindowSurface(display, config, nativeWindow, null);
+                }
+
             } catch (IllegalArgumentException e) {
                 // This exception indicates that the surface flinger surface
                 // is not valid. This can happen if the surface flinger surface has

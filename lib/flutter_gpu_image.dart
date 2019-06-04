@@ -2,6 +2,13 @@ import 'dart:async';
 
 import 'package:flutter/services.dart';
 
+enum GPU_FILTER_TYPE{
+  Blur,
+  Art,
+  Instagram,
+  Others,
+}
+
 enum GPU_FILTERS{
     BokehFilter,
     Glitch,
