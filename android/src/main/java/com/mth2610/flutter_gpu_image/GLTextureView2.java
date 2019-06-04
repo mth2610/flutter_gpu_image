@@ -1,4 +1,4 @@
-package com.mth2610.flutter_opengl;
+package com.mth2610.flutter_gpu_image;
 
 import android.content.Context;
 import android.graphics.SurfaceTexture;
@@ -49,18 +49,21 @@ public class GLTextureView2 extends TextureView implements TextureView.SurfaceTe
 
     private int targetFps;
 
-    public GLTextureView2(Context context) {
+    public GLTextureView2(Context context, SurfaceTexture surfaceTexture) {
         super(context);
+        this.mSurface = surfaceTexture;
         initialize(context);
     }
 
-    public GLTextureView2(Context context, AttributeSet attrs) {
+    public GLTextureView2(Context context, AttributeSet attrs, SurfaceTexture surfaceTexture) {
         super(context, attrs);
+        this.mSurface = surfaceTexture;
         initialize(context);
     }
 
-    public GLTextureView2(Context context, AttributeSet attrs, int defStyleAttr) {
+    public GLTextureView2(Context context, AttributeSet attrs, int defStyleAttr, SurfaceTexture surfaceTexture) {
         super(context, attrs, defStyleAttr);
+        this.mSurface = surfaceTexture;
         initialize(context);
     }
 
@@ -184,7 +187,7 @@ public class GLTextureView2 extends TextureView implements TextureView.SurfaceTe
         }
     }
 
-    private synchronized void drawSingleFrame() {
+    public synchronized void drawSingleFrame() {
         checkCurrent();
 
         if(mRenderer != null)

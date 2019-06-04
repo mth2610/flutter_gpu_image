@@ -162,11 +162,10 @@ public class FlutterGpuImagePlugin implements MethodCallHandler {
         if(isInit!=true){
             result.error("Process failed", "Not initilized", "Not initilized");
         }else{
-            gpuImage = new GPUImage(mRegistrar.context(), surfaceTexture);
-            GLTextureView glTextureView = new GLTextureView(mRegistrar.context(), surfaceTexture);
+            GPUImage2 gpuImage = new GPUImage2(mRegistrar.context());
+            GLTextureView2 glTextureView = new GLTextureView2(mRegistrar.context(), surfaceTexture);
             gpuImage.setGLTextureView(glTextureView);
-
-
+            
             String inputFilePath = call.argument("inputFilePath");
             String outputFilePath = call.argument("outputFilePath");
             int filter = call.argument("filter");
@@ -193,7 +192,7 @@ public class FlutterGpuImagePlugin implements MethodCallHandler {
         if(isInit!=true){
             result.error("Process failed", "Not initilized", "Not initilized");
         }else{
-            gpuImage = new GPUImage(mRegistrar.context(), surfaceTexture);
+            gpuImage = new GPUImage(mRegistrar.context());
             String inputFilePath = call.argument("inputFilePath");
             String outputFilePath = call.argument("outputFilePath");
             int filter = call.argument("filter");
@@ -216,7 +215,7 @@ public class FlutterGpuImagePlugin implements MethodCallHandler {
         if(isInit!=true){
             result.error("Process failed", "Not initilized", "Not initilized");
         }else{
-            gpuImage = new GPUImage(mRegistrar.context(), surfaceTexture);
+            gpuImage = new GPUImage(mRegistrar.context());
             String inputFilePath = call.argument("inputFilePath");
             String outputFilePath = call.argument("outputFilePath");
             ArrayList filters = call.argument("filters");

@@ -99,7 +99,7 @@ public class GLTextureView extends TextureView
 
     public GLTextureView(Context context, SurfaceTexture surfaceTexture) {
         super(context);
-        this.surfaceTexture = surfaceTexture;
+        //this.surfaceTexture = surfaceTexture;
         init();
     }
 
@@ -109,7 +109,7 @@ public class GLTextureView extends TextureView
      */
     public GLTextureView(Context context, AttributeSet attrs, SurfaceTexture surfaceTexture) {
         super(context, attrs);
-        this.surfaceTexture = surfaceTexture;
+        //this.surfaceTexture = surfaceTexture;
         init();
     }
 
@@ -394,7 +394,6 @@ public class GLTextureView extends TextureView
     public int getRenderMode() {
         return glThread.getRenderMode();
     }
-
     /**
      * Request that the renderer render a frame.
      * This method is typically used when the render mode has been set to

@@ -16,7 +16,6 @@
 
 package com.mth2610.flutter_gpu_image;
 
-import io.flutter.plugin.common.MethodChannel.Result;
 import android.app.ActivityManager;
 import android.content.Context;
 import android.content.pm.ConfigurationInfo;
@@ -29,35 +28,33 @@ import android.graphics.PixelFormat;
 import android.graphics.SurfaceTexture;
 import android.hardware.Camera;
 import android.media.ExifInterface;
-import android.media.MediaScannerConnection;
 import android.net.Uri;
 import android.opengl.GLSurfaceView;
 import android.os.AsyncTask;
-import android.os.Environment;
 import android.os.Handler;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.Display;
 import android.view.WindowManager;
 
+import com.mth2610.flutter_gpu_image.base_filters.GPUImageFilter;
+import com.mth2610.flutter_gpu_image.util.Rotation;
+
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.List;
 
-import com.mth2610.flutter_gpu_image.base_filters.GPUImageFilter;
-
-import com.mth2610.flutter_gpu_image.util.Rotation;
+import io.flutter.plugin.common.MethodChannel.Result;
 
 
 /**
  * The main accessor for GPUImage functionality. This class helps to do common
  * tasks through a simple interface.
  */
-public class GPUImage {
+public class GPUImage2 {
 
     public enum ScaleType {CENTER_INSIDE, CENTER_CROP}
 
@@ -69,7 +66,7 @@ public class GPUImage {
     private final GPUImageRenderer renderer;
     private int surfaceType = SURFACE_TYPE_SURFACE_VIEW;
     private GLSurfaceView glSurfaceView;
-    private GLTextureView glTextureView;
+    private GLTextureView2 glTextureView;
     private GPUImageFilter filter;
     private Bitmap currentBitmap;
     private ScaleType scaleType = ScaleType.CENTER_CROP;
@@ -78,7 +75,7 @@ public class GPUImage {
      *
      * @param context the context
      */
-    public GPUImage(final Context context) {
+    public GPUImage2(final Context context) {
         if (!supportsOpenGLES2(context)) {
             throw new IllegalStateException("OpenGL ES 2.0 is not supported on this phone.");
         }
@@ -122,16 +119,17 @@ public class GPUImage {
      *
      * @param view the GLTextureView
      */
-    public void setGLTextureView(final GLTextureView view) {
+    public void setGLTextureView(final GLTextureView2 view) {
         surfaceType = SURFACE_TYPE_TEXTURE_VIEW;
         glTextureView = view;
-        glTextureView.setEGLContextClientVersion(2);
-        glTextureView.setEGLConfigChooser(8, 8, 8, 8, 16, 0);
-        glTextureView.setOpaque(false);
-        glTextureView.setSurfaceTexture(surfaceTexture);
-        glTextureView.setRenderer(renderer);
-        glTextureView.setRenderMode(GLSurfaceView.RENDERMODE_WHEN_DIRTY);
-        glTextureView.requestRender();
+
+//        glTextureView.setEGLContextClientVersion(2);
+//        glTextureView.setEGLConfigChooser(8, 8, 8, 8, 16, 0);
+//        glTextureView.setOpaque(false);
+//        glTextureView.setSurfaceTexture(surfaceTexture);
+//        glTextureView.setRenderer(renderer);
+//        glTextureView.setRenderMode(GLSurfaceView.RENDERMODE_WHEN_DIRTY);
+//        glTextureView.requestRender();
     }
 
     /**
@@ -160,14 +158,14 @@ public class GPUImage {
             Log.i("TextureView", "TextureView");
             if (glTextureView != null) {
                 Log.i("TextureView1", "TextureView1");
-                glTextureView.requestRender();
+                glTextureView.drawSingleFrame();
             }
         }
     }
 
     /**
      * Deprecated: Please call
-     * {@link GPUImage#updatePreviewFrame(byte[], int, int)} frame by frame
+     * {@link GPUImage2#updatePreviewFrame(byte[], int, int)} frame by frame
      * <p>
      * Sets the up camera to be connected to GPUImage to get a filtered preview.
      *
@@ -180,7 +178,7 @@ public class GPUImage {
 
     /**
      * Deprecated: Please call
-     * {@link GPUImage#updatePreviewFrame(byte[], int, int)} frame by frame
+     * {@link GPUImage2#updatePreviewFrame(byte[], int, int)} frame by frame
      * <p>
      * Sets the up camera to be connected to GPUImage to get a filtered preview.
      *
@@ -195,7 +193,7 @@ public class GPUImage {
         if (surfaceType == SURFACE_TYPE_SURFACE_VIEW) {
             glSurfaceView.setRenderMode(GLSurfaceView.RENDERMODE_CONTINUOUSLY);
         } else if (surfaceType == SURFACE_TYPE_TEXTURE_VIEW) {
-            glTextureView.setRenderMode(GLSurfaceView.RENDERMODE_CONTINUOUSLY);
+            //glTextureView.setRenderMode(GLSurfaceView.RENDERMODE_CONTINUOUSLY);
         }
         renderer.setUpSurfaceTexture(camera);
         Rotation rotation = Rotation.NORMAL;
@@ -255,7 +253,10 @@ public class GPUImage {
      */
     public void setScaleType(ScaleType scaleType) {
         this.scaleType = scaleType;
-        renderer.setScaleType(scaleType);
+
+        //renderer.setScaleType(scaleType);
+
+
         renderer.deleteImage();
         currentBitmap = null;
         requestRender();
@@ -376,7 +377,9 @@ public class GPUImage {
         GPUImageRenderer renderer = new GPUImageRenderer(filter);
         renderer.setRotation(Rotation.NORMAL,
                 this.renderer.isFlippedHorizontally(), this.renderer.isFlippedVertically());
-        renderer.setScaleType(scaleType);
+
+        //renderer.setScaleType(scaleType);
+
         PixelBuffer buffer = new PixelBuffer(bitmap.getWidth(), bitmap.getHeight(), surfaceTexture);
         buffer.setRenderer(renderer);
         renderer.setImageBitmap(bitmap, recycle);
@@ -568,7 +571,7 @@ public class GPUImage {
 
         private final Uri uri;
 
-        public LoadImageUriTask(GPUImage gpuImage, Uri uri) {
+        public LoadImageUriTask(GPUImage2 gpuImage, Uri uri) {
             super(gpuImage);
             this.uri = uri;
         }
@@ -611,7 +614,7 @@ public class GPUImage {
 
         private final File imageFile;
 
-        public LoadImageFileTask(GPUImage gpuImage, File file) {
+        public LoadImageFileTask(GPUImage2 gpuImage, File file) {
             super(gpuImage);
             imageFile = file;
         }
@@ -642,11 +645,11 @@ public class GPUImage {
 
     private abstract class LoadImageTask extends AsyncTask<Void, Void, Bitmap> {
 
-        private final GPUImage gpuImage;
+        private final GPUImage2 gpuImage;
         private int outputWidth;
         private int outputHeight;
 
-        public LoadImageTask(final GPUImage gpuImage) {
+        public LoadImageTask(final GPUImage2 gpuImage) {
             this.gpuImage = gpuImage;
         }
 
