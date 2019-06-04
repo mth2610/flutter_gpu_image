@@ -86,7 +86,7 @@ class FlutterGpuImage {
     String outPutFilePath = await _channel.invokeMethod('applyMultiFiltersAndSaveToFile', {
       'inputFilePath': inputFilePath,
       'outputFilePath': outputFilePath,
-      'filter': filters,
+      'filters': filters,
     });
     return outPutFilePath;
   }
