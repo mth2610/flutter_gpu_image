@@ -51,7 +51,6 @@ public class GLTextureView2  {
     private EGLConfig eglConfig;
     private EGLContext eglContext;
     private EGLSurface eglSurface;
-    private EGLSurface eglWindowSurface;
     private SurfaceTexture surfaceTexture;
     private GL10 gl10;
     private String mThreadOwner;
@@ -88,7 +87,7 @@ public class GLTextureView2  {
         eglContext = egl10.eglCreateContext(eglDisplay, eglConfig, EGL_NO_CONTEXT, attrib_list);
 
         surfaceTexture.setDefaultBufferSize(width, height);
-        eglWindowSurface = egl10.eglCreateWindowSurface(eglDisplay, eglConfig, surfaceTexture, null);
+        eglSurface = egl10.eglCreateWindowSurface(eglDisplay, eglConfig, surfaceTexture, null);
 
         egl10.eglMakeCurrent(eglDisplay, eglSurface, eglSurface, eglContext);
         gl10 = (GL10) eglContext.getGL();
