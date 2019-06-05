@@ -84,9 +84,10 @@ public class GLTextureView2  {
                 EGL_CONTEXT_CLIENT_VERSION, 2,
                 EGL10.EGL_NONE
         };
-        eglContext = egl10.eglCreateContext(eglDisplay, eglConfig, EGL_NO_CONTEXT, attrib_list);
 
-        surfaceTexture.setDefaultBufferSize(width, height);
+        //surfaceTexture.setDefaultBufferSize(width, height);
+
+        eglContext = egl10.eglCreateContext(eglDisplay, eglConfig, EGL_NO_CONTEXT, null);
         eglSurface = egl10.eglCreateWindowSurface(eglDisplay, eglConfig, surfaceTexture, null);
 
         egl10.eglMakeCurrent(eglDisplay, eglSurface, eglSurface, eglContext);
