@@ -1,6 +1,7 @@
 package com.mth2610.flutter_gpu_image;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.graphics.SurfaceTexture;
 import android.opengl.GLSurfaceView;
 import android.opengl.GLUtils;
@@ -16,306 +17,208 @@ import javax.microedition.khronos.egl.EGLSurface;
 import javax.microedition.khronos.opengles.GL10;
 import javax.microedition.khronos.opengles.GL11;
 
+import static javax.microedition.khronos.egl.EGL10.EGL_DEFAULT_DISPLAY;
+import static javax.microedition.khronos.egl.EGL10.EGL_HEIGHT;
+import static javax.microedition.khronos.egl.EGL10.EGL_NONE;
+import static javax.microedition.khronos.egl.EGL10.EGL_NO_CONTEXT;
+import static javax.microedition.khronos.egl.EGL10.EGL_WIDTH;
+
+import static javax.microedition.khronos.egl.EGL10.EGL_ALPHA_SIZE;
+import static javax.microedition.khronos.egl.EGL10.EGL_BLUE_SIZE;
+import static javax.microedition.khronos.egl.EGL10.EGL_DEFAULT_DISPLAY;
+import static javax.microedition.khronos.egl.EGL10.EGL_DEPTH_SIZE;
+import static javax.microedition.khronos.egl.EGL10.EGL_GREEN_SIZE;
+import static javax.microedition.khronos.egl.EGL10.EGL_HEIGHT;
+import static javax.microedition.khronos.egl.EGL10.EGL_NONE;
+import static javax.microedition.khronos.egl.EGL10.EGL_NO_CONTEXT;
+import static javax.microedition.khronos.egl.EGL10.EGL_RED_SIZE;
+import static javax.microedition.khronos.egl.EGL10.EGL_STENCIL_SIZE;
+import static javax.microedition.khronos.egl.EGL10.EGL_WIDTH;
 /**
  * Created on 15-10-18.
  */
-public class GLTextureView2 extends TextureView implements TextureView.SurfaceTextureListener {
+public class GLTextureView2  {
+    private final static String TAG = "GLTexture2";
+    private final static boolean LIST_CONFIGS = false;
 
-    private GLSurfaceView.Renderer mRenderer;
+    private GLSurfaceView.Renderer renderer; // borrow this interface
+    private int width, height;
+    private Bitmap bitmap;
 
-    private static final int TARGET_FRAME_RATE = 55;
-    private static final int EGL_OPENGL_ES2_BIT = 4;
-    private static final int EGL_CONTEXT_CLIENT_VERSION = 0x3098;
-    private static final String TAG = "RenderThread";
-    private SurfaceTexture mSurface;
-    private EGLDisplay mEglDisplay;
-    private EGLSurface mEglSurface;
-    private EGLContext mEglContext;
-    private EGL10 mEgl;
+    private EGL10 egl10;
+    private EGLDisplay eglDisplay;
+    private EGLConfig[] eglConfigs;
     private EGLConfig eglConfig;
-    private GL10 mGl;
+    private EGLContext eglContext;
+    private EGLSurface eglSurface;
+    private EGLSurface eglWindowSurface;
+    private SurfaceTexture surfaceTexture;
+    private GL10 gl10;
+    private String mThreadOwner;
 
-
-    private int targetFrameDurationMillis;
-
-    private int surfaceHeight;
-    private int surfaceWidth;
-
-    public boolean isRunning = false;
-    private boolean paused = true;
-    private boolean rendererChanged = false;
-
-    private RenderThread thread;
-
-    private int targetFps;
-
-    public GLTextureView2(Context context, SurfaceTexture surfaceTexture) {
-        super(context);
-        this.mSurface = surfaceTexture;
-        initialize(context);
-        initGL();
+    public GLTextureView2(SurfaceTexture surfaceTexture) {
+        this.surfaceTexture = surfaceTexture;
     }
 
-    public GLTextureView2(Context context, AttributeSet attrs, SurfaceTexture surfaceTexture) {
-        super(context, attrs);
-        this.mSurface = surfaceTexture;
-        initialize(context);
-        initGL();
+    public void init(int width, int height){
+        this.width = width;
+        this.height = height;
+
+        int[] version = new int[2];
+        int[] attribList = new int[]{
+                EGL_WIDTH, width,
+                EGL_HEIGHT, height,
+                EGL_NONE
+        };
+
+        // No error checking performed, minimum required code to elucidate logic
+        egl10 = (EGL10) EGLContext.getEGL();
+        eglDisplay = egl10.eglGetDisplay(EGL_DEFAULT_DISPLAY);
+        egl10.eglInitialize(eglDisplay, version);
+        eglConfig = chooseConfig(); // Choosing a config is a little more
+        // complicated
+
+        // eglContext = egl10.eglCreateContext(eglDisplay, eglConfig,
+        // EGL_NO_CONTEXT, null);
+        int EGL_CONTEXT_CLIENT_VERSION = 0x3098;
+        int[] attrib_list = {
+                EGL_CONTEXT_CLIENT_VERSION, 2,
+                EGL10.EGL_NONE
+        };
+        eglContext = egl10.eglCreateContext(eglDisplay, eglConfig, EGL_NO_CONTEXT, attrib_list);
+
+        surfaceTexture.setDefaultBufferSize(width, height);
+        eglWindowSurface = egl10.eglCreateWindowSurface(eglDisplay, eglConfig, surfaceTexture, null);
+
+        egl10.eglMakeCurrent(eglDisplay, eglSurface, eglSurface, eglContext);
+        gl10 = (GL10) eglContext.getGL();
+
+        // Record thread owner of OpenGL context
+        mThreadOwner = Thread.currentThread().getName();
     }
 
-    public GLTextureView2(Context context, AttributeSet attrs, int defStyleAttr, SurfaceTexture surfaceTexture) {
-        super(context, attrs, defStyleAttr);
-        this.mSurface = surfaceTexture;
-        initialize(context);
-        initGL();
-    }
+    public void setRenderer(final GLSurfaceView.Renderer renderer) {
+        this.renderer = renderer;
 
-    public synchronized void setRenderer(GLSurfaceView.Renderer renderer){
-        mRenderer = renderer;
-        rendererChanged = true;
-    }
-
-
-    private void initialize(Context context) {
-        targetFps = TARGET_FRAME_RATE;
-
-        setSurfaceTextureListener(this);
-    }
-
-    @Override
-    public void onSurfaceTextureAvailable(SurfaceTexture surface, int width, int height) {
-        startThread(surface, width, height, targetFps);
-    }
-
-    public void startThread(SurfaceTexture surface, int width, int height, float targetFramesPerSecond){
-        Log.d(TAG, "Starting GLTextureView thread");
-        thread = new RenderThread();
-        mSurface = surface;
-        setDimensions(width, height);
-        targetFrameDurationMillis = (int) ((1f/targetFramesPerSecond)*1000);
-        thread.start();
-
-    }
-
-    @Override
-    public void onSurfaceTextureSizeChanged(SurfaceTexture surface, int width, int height) {
-        setDimensions(width, height);
-        if(mRenderer != null)
-            mRenderer.onSurfaceChanged(mGl, width, height);
-    }
-
-    public synchronized void setPaused(boolean isPaused){
-        Log.d(TAG, String.format("Setting GLTextureView paused to %s", isPaused));
-        paused = isPaused;
-    }
-
-    public synchronized boolean isPaused(){
-        return paused;
-    }
-
-    @Override
-    public boolean onSurfaceTextureDestroyed(SurfaceTexture surface) {
-        stopThread();
-        return false;
-    }
-
-    public void stopThread(){
-        if(thread != null){
-            Log.d(TAG, "Stopping and joining GLTextureView");
-            isRunning = false;
-            try {
-                thread.join();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-
-            thread = null;
+        // Does this thread own the OpenGL context?
+        if (!Thread.currentThread().getName().equals(mThreadOwner)) {
+            Log.e(TAG, "setRenderer: This thread does not own the OpenGL context.");
+            return;
         }
 
+        // Call the renderer initialization routines
+        this.renderer.onSurfaceCreated(gl10, eglConfig);
+        this.renderer.onSurfaceChanged(gl10, width, height);
     }
 
-    private boolean shouldSleep(){
-        return isPaused() || mRenderer == null;
-    }
-
-    private class RenderThread extends Thread {
-        @Override
-        public void run() {
-            isRunning = true;
-
-            initGL();
-            checkGlError();
-
-            long lastFrameTime = System.currentTimeMillis();
-
-            while (isRunning) {
-                while (mRenderer == null){
-                    try {
-                        Thread.sleep(100);
-                    } catch (InterruptedException e){
-                        // Ignore
-                    }
-
-                }
-                if(rendererChanged){
-                    initializeRenderer(mRenderer);
-                    rendererChanged = false;
-                }
-                if (!shouldSleep()) {
-                    lastFrameTime = System.currentTimeMillis();
-                    drawSingleFrame();
-                }
-
-                try {
-                    if (shouldSleep())
-                        Thread.sleep(100);
-                    else {
-                        long thisFrameTime = System.currentTimeMillis();
-                        long timDiff = thisFrameTime - lastFrameTime;
-                        lastFrameTime = thisFrameTime;
-                        Thread.sleep(Math.max(10l, targetFrameDurationMillis - timDiff));
-                    }
-                } catch (InterruptedException e) {
-// Ignore
-                }
-            }
+    public void requestRender(){
+        // Do we have a renderer?
+        if (renderer == null) {
+            Log.e(TAG, "getBitmap: Renderer was not set.");
         }
 
-    }
-
-    private synchronized void initializeRenderer(GLSurfaceView.Renderer renderer) {
-        if(renderer != null && isRunning) {
-            renderer.onSurfaceCreated(mGl, eglConfig);
-            renderer.onSurfaceChanged(mGl, surfaceWidth, surfaceHeight);
+        // Does this thread own the OpenGL context?
+        if (!Thread.currentThread().getName().equals(mThreadOwner)) {
+            Log.e(TAG, "getBitmap: This thread does not own the OpenGL context.");
         }
-    }
-
-    public synchronized void requestRender() {
-        if(rendererChanged){
-            mRenderer.onSurfaceCreated(mGl, eglConfig);
-            mRenderer.onSurfaceChanged(mGl, surfaceWidth, surfaceHeight);
-            rendererChanged = false;
-        }
-        drawSingleFrame();
-    }
-
-    public synchronized void drawSingleFrame() {
-        checkCurrent();
-
-        if(mRenderer != null)
-            mRenderer.onDrawFrame(mGl);
-
-        checkGlError();
-        if (!mEgl.eglSwapBuffers(mEglDisplay, mEglSurface)) {
+        // Call the renderer draw routine (it seems that some filters do not
+        // work if this is only called once)
+        renderer.onDrawFrame(gl10);
+        if (!egl10.eglSwapBuffers(eglDisplay, eglSurface)) {
             Log.e(TAG, "cannot swap buffers!");
         }
     }
 
-    public void setDimensions(int width, int height){
-        surfaceWidth = width;
-        surfaceHeight = height;
+    public Bitmap getBitmap() {
+        // Do we have a renderer?
+        if (renderer == null) {
+            Log.e(TAG, "getBitmap: Renderer was not set.");
+            return null;
+        }
+
+        // Does this thread own the OpenGL context?
+        if (!Thread.currentThread().getName().equals(mThreadOwner)) {
+            Log.e(TAG, "getBitmap: This thread does not own the OpenGL context.");
+            return null;
+        }
+
+        // Call the renderer draw routine (it seems that some filters do not
+        // work if this is only called once)
+        renderer.onDrawFrame(gl10);
+        if (!egl10.eglSwapBuffers(eglDisplay, eglSurface)) {
+            Log.e(TAG, "cannot swap buffers!");
+        }
+        convertToBitmap();
+        return bitmap;
     }
 
-    private void checkCurrent() {
-        if (!mEglContext.equals(mEgl.eglGetCurrentContext())
-                || !mEglSurface.equals(mEgl
-                .eglGetCurrentSurface(EGL10.EGL_DRAW))) {
-            checkEglError();
-            if (!mEgl.eglMakeCurrent(mEglDisplay, mEglSurface,
-                    mEglSurface, mEglContext)) {
-                throw new RuntimeException(
-                        "eglMakeCurrent failed "
-                                + GLUtils.getEGLErrorString(mEgl
-                                .eglGetError()));
-            }
-            checkEglError();
-        }
+    public void destroy() {
+        renderer.onDrawFrame(gl10);
+        renderer.onDrawFrame(gl10);
+        egl10.eglMakeCurrent(eglDisplay, EGL10.EGL_NO_SURFACE,
+                EGL10.EGL_NO_SURFACE, EGL10.EGL_NO_CONTEXT);
+
+        egl10.eglDestroySurface(eglDisplay, eglSurface);
+        egl10.eglDestroyContext(eglDisplay, eglContext);
+        egl10.eglTerminate(eglDisplay);
     }
 
-    private void checkEglError() {
-        final int error = mEgl.eglGetError();
-        if (error != EGL10.EGL_SUCCESS) {
-            Log.e(TAG, "EGL error = 0x" + Integer.toHexString(error));
-        }
-    }
-
-    private void checkGlError() {
-        final int error = mGl.glGetError();
-        if (error != GL11.GL_NO_ERROR) {
-            Log.e(TAG, "GL error = 0x" + Integer.toHexString(error));
-        }
-    }
-
-    private void initGL() {
-        mEgl = (EGL10) EGLContext.getEGL();
-        mEglDisplay = mEgl.eglGetDisplay(EGL10.EGL_DEFAULT_DISPLAY);
-        if (mEglDisplay == EGL10.EGL_NO_DISPLAY) {
-            throw new RuntimeException("eglGetDisplay failed "
-                    + GLUtils.getEGLErrorString(mEgl.eglGetError()));
-        }
-        int[] version = new int[2];
-        if (!mEgl.eglInitialize(mEglDisplay, version)) {
-            throw new RuntimeException("eglInitialize failed "
-                    + GLUtils.getEGLErrorString(mEgl.eglGetError()));
-        }
-        int[] configsCount = new int[1];
-        EGLConfig[] configs = new EGLConfig[1];
-        int[] configSpec = {
-                EGL10.EGL_RENDERABLE_TYPE,
-                EGL_OPENGL_ES2_BIT,
-                EGL10.EGL_RED_SIZE, 8,
-                EGL10.EGL_GREEN_SIZE, 8,
-                EGL10.EGL_BLUE_SIZE, 8,
-                EGL10.EGL_ALPHA_SIZE, 8,
-                EGL10.EGL_DEPTH_SIZE, 0,
-                EGL10.EGL_STENCIL_SIZE, 0,
-                EGL10.EGL_NONE
+    private EGLConfig chooseConfig() {
+        int[] attribList = new int[]{
+                EGL_DEPTH_SIZE, 0,
+                EGL_STENCIL_SIZE, 0,
+                EGL_RED_SIZE, 8,
+                EGL_GREEN_SIZE, 8,
+                EGL_BLUE_SIZE, 8,
+                EGL_ALPHA_SIZE, 8,
+                EGL10.EGL_RENDERABLE_TYPE, 4,
+                EGL_NONE
         };
-        eglConfig = null;
-        if (!mEgl.eglChooseConfig(mEglDisplay, configSpec, configs, 1,
-                configsCount)) {
-            throw new IllegalArgumentException(
-                    "eglChooseConfig failed "
-                            + GLUtils.getEGLErrorString(mEgl
-                            .eglGetError()));
-        } else if (configsCount[0] > 0) {
-            eglConfig = configs[0];
+
+        // No error checking performed, minimum required code to elucidate logic
+        // Expand on this logic to be more selective in choosing a configuration
+        int[] numConfig = new int[1];
+        egl10.eglChooseConfig(eglDisplay, attribList, null, 0, numConfig);
+        int configSize = numConfig[0];
+        eglConfigs = new EGLConfig[configSize];
+        egl10.eglChooseConfig(eglDisplay, attribList, eglConfigs, configSize, numConfig);
+
+        if (LIST_CONFIGS) {
+            listConfig();
         }
-        if (eglConfig == null) {
-            throw new RuntimeException("eglConfig not initialized");
-        }
-        int[] attrib_list = {
-                EGL_CONTEXT_CLIENT_VERSION, 2, EGL10.EGL_NONE
-        };
-        mEglContext = mEgl.eglCreateContext(mEglDisplay,
-                eglConfig, EGL10.EGL_NO_CONTEXT, attrib_list);
-        checkEglError();
-        mEglSurface = mEgl.eglCreateWindowSurface(
-                mEglDisplay, eglConfig, mSurface, null);
-        checkEglError();
-        if (mEglSurface == null || mEglSurface == EGL10.EGL_NO_SURFACE) {
-            int error = mEgl.eglGetError();
-            if (error == EGL10.EGL_BAD_NATIVE_WINDOW) {
-                Log.e(TAG,
-                        "eglCreateWindowSurface returned EGL10.EGL_BAD_NATIVE_WINDOW");
-                return;
-            }
-            throw new RuntimeException(
-                    "eglCreateWindowSurface failed "
-                            + GLUtils.getEGLErrorString(error));
-        }
-        if (!mEgl.eglMakeCurrent(mEglDisplay, mEglSurface,
-                mEglSurface, mEglContext)) {
-            throw new RuntimeException("eglMakeCurrent failed "
-                    + GLUtils.getEGLErrorString(mEgl.eglGetError()));
-        }
-        checkEglError();
-        mGl = (GL10) mEglContext.getGL();
-        checkEglError();
+
+        return eglConfigs[0]; // Best match is probably the first configuration
     }
 
-    @Override
-    public void onSurfaceTextureUpdated(SurfaceTexture surface) {
+    private void listConfig() {
+        Log.i(TAG, "Config List {");
+
+        for (EGLConfig config : eglConfigs) {
+            int d, s, r, g, b, a;
+
+            // Expand on this logic to dump other attributes
+            d = getConfigAttrib(config, EGL_DEPTH_SIZE);
+            s = getConfigAttrib(config, EGL_STENCIL_SIZE);
+            r = getConfigAttrib(config, EGL_RED_SIZE);
+            g = getConfigAttrib(config, EGL_GREEN_SIZE);
+            b = getConfigAttrib(config, EGL_BLUE_SIZE);
+            a = getConfigAttrib(config, EGL_ALPHA_SIZE);
+            Log.i(TAG, "    <d,s,r,g,b,a> = <" + d + "," + s + "," +
+                    r + "," + g + "," + b + "," + a + ">");
+        }
+
+        Log.i(TAG, "}");
+    }
+
+    private int getConfigAttrib(final EGLConfig config, final int attribute) {
+        int[] value = new int[1];
+        return egl10.eglGetConfigAttrib(eglDisplay, config,
+                attribute, value) ? value[0] : 0;
+    }
+
+    private void convertToBitmap() {
+        bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
+        GPUImageNativeLibrary.adjustBitmap(bitmap);
     }
 
 }
