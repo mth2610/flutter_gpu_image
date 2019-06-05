@@ -190,6 +190,14 @@ public class GLTextureView2 extends TextureView implements TextureView.SurfaceTe
         }
     }
 
+    public synchronized void requestRender() {
+        if(rendererChanged){
+            initializeRenderer(mRenderer);
+            rendererChanged = false;
+        }
+        drawSingleFrame();
+    }
+
     public synchronized void drawSingleFrame() {
         checkCurrent();
 

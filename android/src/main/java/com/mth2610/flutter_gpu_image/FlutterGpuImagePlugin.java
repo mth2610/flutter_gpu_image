@@ -156,7 +156,6 @@ public class FlutterGpuImagePlugin implements MethodCallHandler {
         this.surfaceTexture = entry.surfaceTexture();
         //this.gpuImage = new GPUImage(mRegistrar.context(), surfaceTexture);
         this.glTextureView = new GLTextureView2(mRegistrar.context(), surfaceTexture);
-
         this.isInit = true;
         result.success(entry.id());
     }else if(call.method.equals("applyFilter")) {

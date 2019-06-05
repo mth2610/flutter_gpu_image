@@ -260,6 +260,7 @@ public class GPUImageRenderer implements GLSurfaceView.Renderer, GLTextureView.R
                 }
 
                 Log.i("glTextureID", String.valueOf(glTextureId));
+
                 imageWidth = bitmap.getWidth();
                 imageHeight = bitmap.getHeight();
                 adjustImageScaling();

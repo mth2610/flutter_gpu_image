@@ -123,7 +123,7 @@ public class GPUImage2 {
         surfaceType = SURFACE_TYPE_TEXTURE_VIEW;
         glTextureView = view;
         glTextureView.setRenderer(renderer);
-        glTextureView.drawSingleFrame();
+        glTextureView.requestRender();
 //        glTextureView.setEGLContextClientVersion(2);
 //        glTextureView.setEGLConfigChooser(8, 8, 8, 8, 16, 0);
 //        glTextureView.setOpaque(false);
@@ -154,12 +154,11 @@ public class GPUImage2 {
                 Log.i("SurfaceView1", "SurfaceView1");
                 glSurfaceView.requestRender();
             }
-
         } else if (surfaceType == SURFACE_TYPE_TEXTURE_VIEW) {
             Log.i("TextureView", "TextureView");
             if (glTextureView != null) {
                 Log.i("TextureView1", "TextureView1");
-                glTextureView.drawSingleFrame();
+                glTextureView.requestRender();
             }
         }
     }
