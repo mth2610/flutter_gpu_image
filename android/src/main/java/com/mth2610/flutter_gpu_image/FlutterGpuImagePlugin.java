@@ -156,6 +156,7 @@ public class FlutterGpuImagePlugin implements MethodCallHandler {
         this.surfaceTexture = entry.surfaceTexture();
         //this.gpuImage = new GPUImage(mRegistrar.context(), surfaceTexture);
         this.glTextureView = new GLTextureView2(surfaceTexture);
+        glTextureView.init(100, 100);
         this.isInit = true;
         result.success(entry.id());
     }else if(call.method.equals("applyFilter")) {
@@ -174,8 +175,6 @@ public class FlutterGpuImagePlugin implements MethodCallHandler {
                 surfaceTexture.setDefaultBufferSize(inputBitmap.getWidth(), inputBitmap.getHeight());
                 gpuImage.setImage(inputBitmap);
                 gpuImage.setFilter(ORTHER_FILTERS[filter]);
-
-                glTextureView.init(inputBitmap.getWidth(), inputBitmap.getHeight());
                 gpuImage.setGLTextureView(glTextureView);
                 //gpuImage.getBitmapWithFilterApplied();
                 //gpuImage.getBitmapWithFilterApplied(inputBitmap);
