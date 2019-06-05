@@ -42,8 +42,8 @@ public class GLTextureView2  {
     private final static boolean LIST_CONFIGS = false;
 
     private GLSurfaceView.Renderer renderer; // borrow this interface
-    private int width, height;
-    private Bitmap bitmap;
+    private int width;
+    private int height;
 
     private EGL10 egl10;
     private EGLDisplay eglDisplay;
@@ -60,12 +60,8 @@ public class GLTextureView2  {
     }
 
     public void init(){
-//        this.width = width;
-//        this.height = height;
 
         int[] version = new int[2];
-
-
         // No error checking performed, minimum required code to elucidate logic
         egl10 = (EGL10) EGLContext.getEGL();
         eglDisplay = egl10.eglGetDisplay(EGL_DEFAULT_DISPLAY);
@@ -88,8 +84,9 @@ public class GLTextureView2  {
         mThreadOwner = Thread.currentThread().getName();
     }
 
-    public void onTextureSizeChange() {
-
+    public void onTextureSizeChange(int width, int height) {
+        this.width = width;
+        this.height = height;
     }
 
     public void setRenderer(final GLSurfaceView.Renderer renderer) {
@@ -124,28 +121,6 @@ public class GLTextureView2  {
         }
     }
 
-    public Bitmap getBitmap() {
-        // Do we have a renderer?
-        if (renderer == null) {
-            Log.e(TAG, "getBitmap: Renderer was not set.");
-            return null;
-        }
-
-        // Does this thread own the OpenGL context?
-        if (!Thread.currentThread().getName().equals(mThreadOwner)) {
-            Log.e(TAG, "getBitmap: This thread does not own the OpenGL context.");
-            return null;
-        }
-
-        // Call the renderer draw routine (it seems that some filters do not
-        // work if this is only called once)
-        renderer.onDrawFrame(gl10);
-        if (!egl10.eglSwapBuffers(eglDisplay, eglSurface)) {
-            Log.e(TAG, "cannot swap buffers!");
-        }
-        convertToBitmap();
-        return bitmap;
-    }
 
     public void destroy() {
         renderer.onDrawFrame(gl10);
@@ -210,10 +185,4 @@ public class GLTextureView2  {
         return egl10.eglGetConfigAttrib(eglDisplay, config,
                 attribute, value) ? value[0] : 0;
     }
-
-    private void convertToBitmap() {
-        bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
-        GPUImageNativeLibrary.adjustBitmap(bitmap);
-    }
-
 }

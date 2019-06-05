@@ -165,21 +165,18 @@ public class FlutterGpuImagePlugin implements MethodCallHandler {
         }else{
             GPUImage2 gpuImage = new GPUImage2(mRegistrar.context());
             String inputFilePath = call.argument("inputFilePath");
-            String outputFilePath = call.argument("outputFilePath");
             int filter = call.argument("filter");
             Bitmap inputBitmap = BitmapFactory.decodeFile(inputFilePath);
-            String outputFileName = String.valueOf(System.currentTimeMillis()) + ".png";
-
             try {
-                //ExifInterface inputExif = new ExifInterface(inputFilePath);
                 surfaceTexture.setDefaultBufferSize(inputBitmap.getWidth(), inputBitmap.getHeight());
                 gpuImage.setImage(inputBitmap);
-                gpuImage.setFilter(ORTHER_FILTERS[filter]);
+
+                glTextureView.onTextureSizeChange(inputBitmap.getWidth(), inputBitmap.getHeight());
+
                 gpuImage.setGLTextureView(glTextureView);
-                //gpuImage.getBitmapWithFilterApplied();
-                //gpuImage.getBitmapWithFilterApplied(inputBitmap);
+                gpuImage.setFilter(ORTHER_FILTERS[filter]);
+
                 result.success("success");
-                //gpuImage.saveToPictures(inputBitmap, outputFilePath, outputFileName, null, result, inputExif);
             }catch (Exception e){
                 result.error("error", "error", e.toString());
                 inputBitmap.recycle();
