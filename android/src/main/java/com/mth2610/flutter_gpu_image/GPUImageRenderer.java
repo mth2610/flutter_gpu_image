@@ -24,6 +24,7 @@ import android.hardware.Camera.PreviewCallback;
 import android.hardware.Camera.Size;
 import android.opengl.GLES20;
 import android.opengl.GLSurfaceView;
+import android.util.Log;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
@@ -257,6 +258,8 @@ public class GPUImageRenderer implements GLSurfaceView.Renderer, GLTextureView.R
                 if (resizedBitmap != null) {
                     resizedBitmap.recycle();
                 }
+
+                Log.i("glTextureID", String.valueOf(glTextureId));
                 imageWidth = bitmap.getWidth();
                 imageHeight = bitmap.getHeight();
                 adjustImageScaling();
