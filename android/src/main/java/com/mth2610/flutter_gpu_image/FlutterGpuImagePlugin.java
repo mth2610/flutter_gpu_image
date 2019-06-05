@@ -78,6 +78,7 @@ public class FlutterGpuImagePlugin implements MethodCallHandler {
     private final Registrar mRegistrar;
     private SurfaceTexture surfaceTexture;
     private GPUImage gpuImage;
+    private GLTextureView2 glTextureView;
     private boolean isInit = false;
 
     private GPUImageFilter[] ORTHER_FILTERS;
@@ -154,7 +155,7 @@ public class FlutterGpuImagePlugin implements MethodCallHandler {
         TextureRegistry.SurfaceTextureEntry entry = mRegistrar.textures().createSurfaceTexture();
         this.surfaceTexture = entry.surfaceTexture();
         //this.gpuImage = new GPUImage(mRegistrar.context(), surfaceTexture);
-
+        this.glTextureView = new GLTextureView2(mRegistrar.context(), surfaceTexture);
 
         this.isInit = true;
         result.success(entry.id());
@@ -163,9 +164,6 @@ public class FlutterGpuImagePlugin implements MethodCallHandler {
             result.error("Process failed", "Not initilized", "Not initilized");
         }else{
             GPUImage2 gpuImage = new GPUImage2(mRegistrar.context());
-            GLTextureView2 glTextureView = new GLTextureView2(mRegistrar.context(), surfaceTexture);
-
-
             String inputFilePath = call.argument("inputFilePath");
             String outputFilePath = call.argument("outputFilePath");
             int filter = call.argument("filter");
@@ -178,7 +176,6 @@ public class FlutterGpuImagePlugin implements MethodCallHandler {
                 gpuImage.setImage(inputBitmap);
                 gpuImage.setFilter(ORTHER_FILTERS[filter]);
                 gpuImage.setGLTextureView(glTextureView);
-
                 //gpuImage.getBitmapWithFilterApplied();
                 //gpuImage.getBitmapWithFilterApplied(inputBitmap);
                 result.success("success");

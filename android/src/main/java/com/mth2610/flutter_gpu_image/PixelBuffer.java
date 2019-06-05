@@ -84,7 +84,7 @@ public class PixelBuffer {
             mSurface.setDefaultBufferSize(width, height);
             eglWindowSurface = egl10.eglCreateWindowSurface(eglDisplay, eglConfig, mSurface, null);
         }
-        
+
         egl10.eglMakeCurrent(eglDisplay, eglSurface, eglSurface, eglContext);
         gl10 = (GL10) eglContext.getGL();
 
