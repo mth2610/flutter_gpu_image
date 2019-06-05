@@ -59,16 +59,12 @@ public class GLTextureView2  {
         this.surfaceTexture = surfaceTexture;
     }
 
-    public void init(int width, int height){
-        this.width = width;
-        this.height = height;
+    public void init(){
+//        this.width = width;
+//        this.height = height;
 
         int[] version = new int[2];
-        int[] attribList = new int[]{
-                EGL_WIDTH, width,
-                EGL_HEIGHT, height,
-                EGL_NONE
-        };
+
 
         // No error checking performed, minimum required code to elucidate logic
         egl10 = (EGL10) EGLContext.getEGL();
@@ -77,17 +73,12 @@ public class GLTextureView2  {
         eglConfig = chooseConfig(); // Choosing a config is a little more
         // complicated
 
-        // eglContext = egl10.eglCreateContext(eglDisplay, eglConfig,
-        // EGL_NO_CONTEXT, null);
         int EGL_CONTEXT_CLIENT_VERSION = 0x3098;
         int[] attrib_list = {
                 EGL_CONTEXT_CLIENT_VERSION, 2,
                 EGL10.EGL_NONE
         };
         eglContext = egl10.eglCreateContext(eglDisplay, eglConfig, EGL_NO_CONTEXT, attrib_list);
-
-
-        surfaceTexture.setDefaultBufferSize(width, height);
         eglSurface = egl10.eglCreateWindowSurface(eglDisplay, eglConfig, surfaceTexture, null);
 
         egl10.eglMakeCurrent(eglDisplay, eglSurface, eglSurface, eglContext);
@@ -95,6 +86,10 @@ public class GLTextureView2  {
 
         // Record thread owner of OpenGL context
         mThreadOwner = Thread.currentThread().getName();
+    }
+
+    public void onTextureSizeChange() {
+
     }
 
     public void setRenderer(final GLSurfaceView.Renderer renderer) {
