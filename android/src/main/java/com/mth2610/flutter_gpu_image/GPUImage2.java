@@ -123,6 +123,7 @@ public class GPUImage2 {
         surfaceType = SURFACE_TYPE_TEXTURE_VIEW;
         glTextureView = view;
         glTextureView.setRenderer(renderer);
+        glTextureView.drawSingleFrame();
 //        glTextureView.setEGLContextClientVersion(2);
 //        glTextureView.setEGLConfigChooser(8, 8, 8, 8, 16, 0);
 //        glTextureView.setOpaque(false);
