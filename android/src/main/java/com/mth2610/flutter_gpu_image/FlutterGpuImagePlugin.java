@@ -219,6 +219,9 @@ public class FlutterGpuImagePlugin implements MethodCallHandler {
                     gpuImageFilters.add(ORTHER_FILTERS[(int) filters.get(i)]);
                 }
                 GPUImageFilter gPUImageGroupFilter = new GPUImageFilterGroup(gpuImageFilters);
+
+                gpuImage.deleteImage();
+                gpuImage.setImage(bitmap);
                 gpuImage.setFilter(gPUImageGroupFilter);
                 result.success("success");
             }catch (Exception e){
