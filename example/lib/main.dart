@@ -220,7 +220,7 @@ class _MyAppState extends State<MyApp> {
             //   filter: filter.index
             // );
             _proceessedImage = await _gpuImage.applyFilter(
-              filter: filter.index
+              filter.index
             );
             print(_proceessedImage);
             setState(() {

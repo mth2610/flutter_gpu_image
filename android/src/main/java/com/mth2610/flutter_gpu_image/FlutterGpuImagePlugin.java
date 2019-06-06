@@ -164,7 +164,6 @@ public class FlutterGpuImagePlugin implements MethodCallHandler {
         this.isInit = true;
         result.success(entry.id());
     } else if(call.method.equals("setInputImage")){
-
         gpuImage.deleteImage();
         String inputFilePath = call.argument("inputFilePath");
         int rotate = 0;
@@ -209,34 +208,26 @@ public class FlutterGpuImagePlugin implements MethodCallHandler {
                 result.error("error", "error", e.toString());
             }
         }
-    }
-
-//    else if(call.method.equals("applyFilter")) {
-//        if(isInit!=true){
-//            result.error("Process failed", "Not initilized", "Not initilized");
-//        }else{
-//            GPUImage2 gpuImage = new GPUImage2(mRegistrar.context());
-//            String inputFilePath = call.argument("inputFilePath");
-//            int filter = call.argument("filter");
-//            Bitmap inputBitmap = BitmapFactory.decodeFile(inputFilePath);
-//            try {
-//                surfaceTexture.setDefaultBufferSize(inputBitmap.getWidth(), inputBitmap.getHeight());
-//                gpuImage.setImage(inputBitmap);
-//                glTextureView.onTextureSizeChange(inputBitmap.getWidth(), inputBitmap.getHeight());
-//                gpuImage.setGLTextureView(glTextureView);
-//                gpuImage.setFilter(ORTHER_FILTERS[filter]);
-//                result.success("success");
-//            }catch (Exception e){
-//                result.error("error", "error", e.toString());
-//                inputBitmap.recycle();
-//            }catch (Error e){
-//                result.error("error", "error", e.toString());
-//                inputBitmap.recycle();
-//            }
-//        }
-//    }
-
-    else if(call.method.equals("applyFilterAndSaveToFile")) {
+    } else if(call.method.equals("applyFilters")) {
+        if(isInit!=true||bitmap==null){
+            result.error("Process failed", "Not initilized", "Not initilized");
+        }else{
+            try {
+                ArrayList filters = call.argument("filters");
+                List<GPUImageFilter> gpuImageFilters = new ArrayList<GPUImageFilter>();
+                for(int i=0; i <filters.size(); i++){
+                    gpuImageFilters.add(ORTHER_FILTERS[(int) filters.get(i)]);
+                }
+                GPUImageFilter gPUImageGroupFilter = new GPUImageFilterGroup(gpuImageFilters);
+                gpuImage.setFilter(gPUImageGroupFilter);
+                result.success("success");
+            }catch (Exception e){
+                result.error("error", "error", e.toString());
+            }catch (Error e){
+                result.error("error", "error", e.toString());
+            }
+        }
+    } else if(call.method.equals("applyFilterAndSaveToFile")) {
         if(isInit!=true){
             result.error("Process failed", "Not initilized", "Not initilized");
         }else{

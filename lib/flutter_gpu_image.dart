@@ -87,15 +87,16 @@ class FlutterGpuImage {
     rotation = result["rotation"];
   }
 
-  Future<String> applyFilter({
-    // String inputFilePath, 
-    // String outputFilePath, 
-    int filter
-    }) async {
+  Future<String> applyFilter(int filter) async {
     String outPutFilePath = await _channel.invokeMethod('applyFilter', {
-      // 'inputFilePath': inputFilePath,
-      // 'outputFilePath': outputFilePath,
       'filter': filter,
+    });
+    return outPutFilePath;
+  }
+
+  Future<String> applyFilters(List<int> filters) async {
+    String outPutFilePath = await _channel.invokeMethod('applyFilter', {
+      'filter': filters,
     });
     return outPutFilePath;
   }
