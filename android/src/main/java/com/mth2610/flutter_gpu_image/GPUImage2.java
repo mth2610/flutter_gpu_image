@@ -218,6 +218,9 @@ public class GPUImage2 {
      * @param filter the new filter
      */
     public void setFilter(final GPUImageFilter filter) {
+        if(this.filter!=null){
+            this.filter.destroy();
+        }
         this.filter = filter;
         renderer.setFilter(this.filter);
         requestRender();
