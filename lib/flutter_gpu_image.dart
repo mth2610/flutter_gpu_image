@@ -95,7 +95,7 @@ class FlutterGpuImage {
   }
 
   Future<String> applyFilters(List<int> filters) async {
-    String outPutFilePath = await _channel.invokeMethod('applyFilter', {
+    String outPutFilePath = await _channel.invokeMethod('applyFilters', {
       'filter': filters,
     });
     return outPutFilePath;
