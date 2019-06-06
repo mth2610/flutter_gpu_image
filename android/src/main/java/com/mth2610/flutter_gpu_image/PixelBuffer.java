@@ -87,7 +87,6 @@ public class PixelBuffer {
 
         egl10.eglMakeCurrent(eglDisplay, eglSurface, eglSurface, eglContext);
         gl10 = (GL10) eglContext.getGL();
-
         // Record thread owner of OpenGL context
         mThreadOwner = Thread.currentThread().getName();
     }

@@ -65,6 +65,10 @@ enum GPU_FILTERS{
 }
 
 class FlutterGpuImage {
+  int width;
+  int height;
+  int rotation;
+
   static const MethodChannel _channel =
       const MethodChannel('flutter_gpu_image');
 
@@ -73,11 +77,24 @@ class FlutterGpuImage {
     });
     return textureSurfaceID;
   }
-
-  Future<String> applyFilter({String inputFilePath, String outputFilePath, int filter}) async {
-    String outPutFilePath = await _channel.invokeMethod('applyFilter', {
+  
+  Future<void> setInputImage(String inputFilePath) async {
+    Map result = await _channel.invokeMethod('setInputImage', {
       'inputFilePath': inputFilePath,
-      'outputFilePath': outputFilePath,
+    });
+    width = result["width"];
+    height = result["height"];
+    rotation = result["rotation"];
+  }
+
+  Future<String> applyFilter({
+    // String inputFilePath, 
+    // String outputFilePath, 
+    int filter
+    }) async {
+    String outPutFilePath = await _channel.invokeMethod('applyFilter', {
+      // 'inputFilePath': inputFilePath,
+      // 'outputFilePath': outputFilePath,
       'filter': filter,
     });
     return outPutFilePath;

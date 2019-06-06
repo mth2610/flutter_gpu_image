@@ -27,6 +27,9 @@ import android.media.ExifInterface;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.util.Log;
+import java.util.Map;
+import java.util.HashMap;
+import android.graphics.Matrix;
 
 //Hexagon
 //https://www.shadertoy.com/view/XlKyRz
@@ -77,7 +80,8 @@ import android.util.Log;
 public class FlutterGpuImagePlugin implements MethodCallHandler {
     private final Registrar mRegistrar;
     private SurfaceTexture surfaceTexture;
-    private GPUImage gpuImage;
+    private GPUImage2 gpuImage;
+    private Bitmap bitmap;
     private GLTextureView2 glTextureView;
     private boolean isInit = false;
 
@@ -154,42 +158,89 @@ public class FlutterGpuImagePlugin implements MethodCallHandler {
     if (call.method.equals("init")) {
         TextureRegistry.SurfaceTextureEntry entry = mRegistrar.textures().createSurfaceTexture();
         this.surfaceTexture = entry.surfaceTexture();
-        //this.gpuImage = new GPUImage(mRegistrar.context(), surfaceTexture);
+        this.gpuImage = new GPUImage2(mRegistrar.context());
         this.glTextureView = new GLTextureView2(surfaceTexture);
         glTextureView.init();
         this.isInit = true;
         result.success(entry.id());
-    }else if(call.method.equals("applyFilter")) {
-        if(isInit!=true){
+    } else if(call.method.equals("setInputImage")){
+
+        gpuImage.deleteImage();
+        String inputFilePath = call.argument("inputFilePath");
+        int rotate = 0;
+        try {
+            ExifInterface originalExif = new ExifInterface(inputFilePath);
+            int orientation = originalExif.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_UNDEFINED);
+            if(orientation == ExifInterface.ORIENTATION_ROTATE_90){
+                rotate = 90;
+            }else if(orientation == ExifInterface.ORIENTATION_ROTATE_180){
+                rotate = 180;
+            }else if(orientation == ExifInterface.ORIENTATION_ROTATE_270){
+                rotate = 270;
+            } else {
+                rotate = 0;
+            }
+        } catch (Exception e){
+            e.printStackTrace();
+        }
+        bitmap = BitmapFactory.decodeFile(inputFilePath);
+        surfaceTexture.setDefaultBufferSize(bitmap.getWidth(), bitmap.getHeight());
+        gpuImage.setImage(bitmap);
+        glTextureView.onTextureSizeChange(bitmap.getWidth(), bitmap.getHeight());
+        gpuImage.setGLTextureView(glTextureView);
+
+        Map<String, Object> output = new HashMap<>();
+        output.put("width", bitmap.getWidth());
+        output.put("height", bitmap.getHeight());
+        output.put("rotation", rotate);
+        result.success(output);
+
+    } else if(call.method.equals("applyFilter")) {
+        if(isInit!=true||bitmap==null){
             result.error("Process failed", "Not initilized", "Not initilized");
         }else{
-            GPUImage2 gpuImage = new GPUImage2(mRegistrar.context());
-            String inputFilePath = call.argument("inputFilePath");
             int filter = call.argument("filter");
-            Bitmap inputBitmap = BitmapFactory.decodeFile(inputFilePath);
             try {
-                surfaceTexture.setDefaultBufferSize(inputBitmap.getWidth(), inputBitmap.getHeight());
-                gpuImage.setImage(inputBitmap);
-
-                glTextureView.onTextureSizeChange(inputBitmap.getWidth(), inputBitmap.getHeight());
-
-                gpuImage.setGLTextureView(glTextureView);
                 gpuImage.setFilter(ORTHER_FILTERS[filter]);
-
                 result.success("success");
             }catch (Exception e){
                 result.error("error", "error", e.toString());
-                inputBitmap.recycle();
             }catch (Error e){
                 result.error("error", "error", e.toString());
-                inputBitmap.recycle();
             }
         }
-    }else if(call.method.equals("applyFilterAndSaveToFile")) {
+    }
+
+//    else if(call.method.equals("applyFilter")) {
+//        if(isInit!=true){
+//            result.error("Process failed", "Not initilized", "Not initilized");
+//        }else{
+//            GPUImage2 gpuImage = new GPUImage2(mRegistrar.context());
+//            String inputFilePath = call.argument("inputFilePath");
+//            int filter = call.argument("filter");
+//            Bitmap inputBitmap = BitmapFactory.decodeFile(inputFilePath);
+//            try {
+//                surfaceTexture.setDefaultBufferSize(inputBitmap.getWidth(), inputBitmap.getHeight());
+//                gpuImage.setImage(inputBitmap);
+//                glTextureView.onTextureSizeChange(inputBitmap.getWidth(), inputBitmap.getHeight());
+//                gpuImage.setGLTextureView(glTextureView);
+//                gpuImage.setFilter(ORTHER_FILTERS[filter]);
+//                result.success("success");
+//            }catch (Exception e){
+//                result.error("error", "error", e.toString());
+//                inputBitmap.recycle();
+//            }catch (Error e){
+//                result.error("error", "error", e.toString());
+//                inputBitmap.recycle();
+//            }
+//        }
+//    }
+
+    else if(call.method.equals("applyFilterAndSaveToFile")) {
         if(isInit!=true){
             result.error("Process failed", "Not initilized", "Not initilized");
         }else{
-            gpuImage = new GPUImage(mRegistrar.context());
+            gpuImage = new GPUImage2(mRegistrar.context());
             String inputFilePath = call.argument("inputFilePath");
             String outputFilePath = call.argument("outputFilePath");
             int filter = call.argument("filter");
@@ -212,7 +263,7 @@ public class FlutterGpuImagePlugin implements MethodCallHandler {
         if(isInit!=true){
             result.error("Process failed", "Not initilized", "Not initilized");
         }else{
-            gpuImage = new GPUImage(mRegistrar.context());
+            gpuImage = new GPUImage2(mRegistrar.context());
             String inputFilePath = call.argument("inputFilePath");
             String outputFilePath = call.argument("outputFilePath");
             ArrayList filters = call.argument("filters");

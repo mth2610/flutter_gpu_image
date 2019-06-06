@@ -66,6 +66,7 @@ class _MyAppState extends State<MyApp> {
   ];
 
   FlutterGpuImage _gpuImage = FlutterGpuImage();
+
   int _textureId;
   bool _isSaving;
   String _proceessedImage;
@@ -124,20 +125,26 @@ class _MyAppState extends State<MyApp> {
 
   Widget _buildPickedImage(){
     return _proceessedImage != null
-    // ? Container(
-    //     height: 300.0,
-    //     child: Texture(textureId: _textureId) ,
-    //   )
     ? Container(
-      margin: EdgeInsets.all(16),
-      height: 300.0,
-      decoration: BoxDecoration(
-          border: Border.all(width: 1),
-          image: DecorationImage(
-            image: FileImage(File(_proceessedImage)),
-          )
-        )
+      height: 300,
+      child: RotatedBox(
+        quarterTurns: _gpuImage.rotation~/90,
+        child: AspectRatio(
+          aspectRatio: _gpuImage.width/_gpuImage.height,
+          child: Texture(textureId: _textureId) ,
+        ),
+      ),
     )
+    // ? Container(
+    //   margin: EdgeInsets.all(16),
+    //   height: 300.0,
+    //   decoration: BoxDecoration(
+    //       border: Border.all(width: 1),
+    //       image: DecorationImage(
+    //         image: FileImage(File(_proceessedImage)),
+    //       )
+    //     )
+    // )
     : Container(
       margin: EdgeInsets.all(16),
       height: 300.0,
@@ -170,6 +177,7 @@ class _MyAppState extends State<MyApp> {
             icon: Icon(Icons.camera_alt),
             onPressed: ()async{
               var image = await ImagePicker.pickImage(source: ImageSource.camera);
+              await _gpuImage.setInputImage(image.path);
               setState(() {
                 _srcImage = image;
                 _proceessedImage = null;
@@ -180,6 +188,7 @@ class _MyAppState extends State<MyApp> {
             icon: Icon(Icons.folder),
             onPressed: ()async{
               var image = await ImagePicker.pickImage(source: ImageSource.gallery);
+              await _gpuImage.setInputImage(image.path);
               setState(() {
                 _srcImage = image;
                 _proceessedImage = null;
@@ -205,9 +214,12 @@ class _MyAppState extends State<MyApp> {
           if(_srcImage!=null){
             Directory tempDir = await getTemporaryDirectory();
             String tempPath = tempDir.path; 
-            _proceessedImage = await _gpuImage.applyFilterAndSaveToFile(
-              inputFilePath: _srcImage.path,
-              outputFilePath: tempDir.path,
+            // _proceessedImage = await _gpuImage.applyFilterAndSaveToFile(
+            //   inputFilePath: _srcImage.path,
+            //   outputFilePath: tempDir.path,
+            //   filter: filter.index
+            // );
+            _proceessedImage = await _gpuImage.applyFilter(
               filter: filter.index
             );
             print(_proceessedImage);
