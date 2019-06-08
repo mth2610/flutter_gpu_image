@@ -50,6 +50,8 @@ public class OpenGlUtils {
         } else {
             GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, usedTexId);
             GLUtils.texSubImage2D(GLES20.GL_TEXTURE_2D, 0, 0, 0, img);
+
+
             textures[0] = usedTexId;
         }
         if (recycle) {

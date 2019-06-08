@@ -30,7 +30,7 @@ public class GPUImage3x3TextureSamplingFilter2 extends GPUImageFilter {
             "void main()" +
             "{" +
             "    gl_Position = position;" +
-            "    resolution = vec2(texelWidth, texelHeight);" +
+            "    resolution = vec2(1.0/texelWidth, 1.0/texelHeight);" +
             "    textureCoordinate = inputTextureCoordinate.xy;"+
             "}";
 

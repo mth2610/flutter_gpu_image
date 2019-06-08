@@ -8,6 +8,8 @@ import com.mth2610.flutter_gpu_image.instagram_filters.*;
 import com.mth2610.flutter_gpu_image.blind_filters.*;
 import com.mth2610.flutter_gpu_image.art_filters.*;
 import com.mth2610.flutter_gpu_image.blur_filters.*;
+import com.mth2610.flutter_gpu_image.beauty_filters.*;
+import com.mth2610.flutter_gpu_image.natural_filters.*;
 
 import android.graphics.SurfaceTexture;
 
@@ -73,8 +75,54 @@ import android.graphics.Matrix;
 //Fade-in effect
 //https://www.shadertoy.com/view/MlcSz2
 
-//Glitch
-//https://www.shadertoy.com/view/Md3cWN
+// Smoke
+// https://www.shadertoy.com/view/XtS3Rh
+
+// Smoke
+// https://www.shadertoy.com/view/ldBSDd
+
+
+// Fake TV Screen Malfunction
+// https://www.shadertoy.com/view/4scGDr
+
+// Nipple Enchanter
+// https://www.shadertoy.com/view/lljSzz
+// https://www.shadertoy.com/view/Ml2Szz
+// https://www.shadertoy.com/view/Xt2XRR
+// https://www.shadertoy.com/view/XdGXDh
+// https://www.shadertoy.com/view/MtjSzz
+
+
+// Cubic
+// https://www.shadertoy.com/view/XscSWH
+
+//Spark
+//https://www.shadertoy.com/view/3d2XWm
+//https://www.shadertoy.com/view/ldVfWV
+
+//https://www.shadertoy.com/view/MlKSWm fire
+//https://www.shadertoy.com/view/4sfBWj
+
+//fireflies
+//https://www.shadertoy.com/view/4d2fDz
+//https://www.shadertoy.com/view/Wtj3D1
+//https://www.shadertoy.com/view/MtjBWc
+
+//https://www.shadertoy.com/view/3lfGR7 fire frame
+
+// https://www.shadertoy.com/view/Wd23DG boked
+
+//Sakura
+// https://www.shadertoy.com/view/WtSGDz
+
+//Snow flake
+//https://www.shadertoy.com/view/Xsd3zf
+//https://www.shadertoy.com/view/Mdt3Df
+
+//https://www.shadertoy.com/view/ltXXDN
+//https://www.shadertoy.com/view/4scXWB
+//https://www.shadertoy.com/view/MlSSWV
+//https://www.shadertoy.com/view/XsVSWG
 
 /** FlutterGpuImagePlugin */
 public class FlutterGpuImagePlugin implements MethodCallHandler {
@@ -90,6 +138,10 @@ public class FlutterGpuImagePlugin implements MethodCallHandler {
     public FlutterGpuImagePlugin(Registrar registrar) {
         this.mRegistrar = registrar;
         this.ORTHER_FILTERS = new GPUImageFilter[]{
+                new GPUImageBeautyFilter(),
+                new GPUImageRadicalBlurFilter(),
+                new GPUImageFireFilter(),
+                new GPUImageSmoke1Filter(),
 
                 new GPUImageBokehFilter(),
                 new GPUImageGlitchFilter(),
@@ -103,6 +155,7 @@ public class FlutterGpuImagePlugin implements MethodCallHandler {
                 new GPUImageAchromatomalyFilter(),
                 new GPUImageTritanopiaFilter(),
 
+                new GPUImageSketchFilter2(),
                 new GPUImageSketchFilter(),
                 new GPUImageWaterColorFilter(),
                 new GPUImageBilateralBlurFilter(),
@@ -144,6 +197,15 @@ public class FlutterGpuImagePlugin implements MethodCallHandler {
                 new IFValenciaFilter(registrar.context()),
                 new IFWaldenFilter(registrar.context()),
                 new IFXprollFilter(registrar.context()),
+
+                new GPUImageLowPolyFilter(),
+                new GPUImageSnowFilter(),
+                new GPUImageSkinSmoothFilter(),
+                new GPUImageSkinWhitenFilter(),
+                new GPUImageColorSketchFilter(),
+                new GPUImageAntiqueFilter(),
+
+
         };
     }
     

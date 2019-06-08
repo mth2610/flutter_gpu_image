@@ -10,6 +10,11 @@ enum GPU_FILTER_TYPE{
 }
 
 enum GPU_FILTERS{
+    Beauty,
+    RadicalBlur,
+    Fire,
+    Smoke1, 
+
     BokehFilter,
     Glitch,
     VHS,
@@ -21,6 +26,8 @@ enum GPU_FILTERS{
     Achromatopsia,
     Achromatomaly,
     Tritanopia,
+
+    ColorSketch,
     Sketch,
     Color,
     BilateralBlur,
@@ -62,6 +69,13 @@ enum GPU_FILTERS{
     Valencia,
     Walden,
     Xproll,
+
+    LowPoly,
+    Snow,
+    SkinSmooth,
+    SkinWhiten,
+    ColorSketch2,
+    Antique
 }
 
 class FlutterGpuImage {
