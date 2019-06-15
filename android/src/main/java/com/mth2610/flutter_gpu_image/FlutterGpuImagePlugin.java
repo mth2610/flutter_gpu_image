@@ -4,12 +4,14 @@ import com.mth2610.flutter_gpu_image.base_filters.GPUImageFilter;
 import com.mth2610.flutter_gpu_image.base_filters.GPUImageFilterGroup;
 
 import com.mth2610.flutter_gpu_image.filter.*;
+import com.mth2610.flutter_gpu_image.glitch_filters.GPUImageVHSFilter;
 import com.mth2610.flutter_gpu_image.instagram_filters.*;
 import com.mth2610.flutter_gpu_image.blind_filters.*;
 import com.mth2610.flutter_gpu_image.art_filters.*;
 import com.mth2610.flutter_gpu_image.blur_filters.*;
 import com.mth2610.flutter_gpu_image.beauty_filters.*;
 import com.mth2610.flutter_gpu_image.natural_filters.*;
+import com.mth2610.flutter_gpu_image.glitch_filters.*;
 
 import android.graphics.SurfaceTexture;
 
@@ -31,7 +33,6 @@ import android.graphics.BitmapFactory;
 import android.util.Log;
 import java.util.Map;
 import java.util.HashMap;
-import android.graphics.Matrix;
 
 //Hexagon
 //https://www.shadertoy.com/view/XlKyRz
@@ -124,6 +125,9 @@ import android.graphics.Matrix;
 //https://www.shadertoy.com/view/MlSSWV
 //https://www.shadertoy.com/view/XsVSWG
 
+// GLSL
+//http://glslsandbox.com/e#53264.0
+
 /** FlutterGpuImagePlugin */
 public class FlutterGpuImagePlugin implements MethodCallHandler {
     private final Registrar mRegistrar;
@@ -138,6 +142,12 @@ public class FlutterGpuImagePlugin implements MethodCallHandler {
     public FlutterGpuImagePlugin(Registrar registrar) {
         this.mRegistrar = registrar;
         this.ORTHER_FILTERS = new GPUImageFilter[]{
+                new GPUImageOldTVScreenFilter(),
+                new GPUImageColorBlendFilter(),
+                new GPUImageRainbowFilter(),
+                new GPUImageFireFliesFilter(),
+                new GPUImageEdgeGlowFilter(),
+                new GPUImageNippleEnchanterFilter(),
                 new GPUImageBeautyFilter(),
                 new GPUImageRadicalBlurFilter(),
                 new GPUImageFireFilter(),

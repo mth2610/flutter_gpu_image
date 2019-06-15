@@ -72,7 +72,8 @@ public class GPUImageColorSketchFilter extends GPUImage3x3TextureSamplingFilter2
 
             "void main()" +
             "{" +
-            "   vec2 iResolution = 1.0/resolution.xy;"+
+            "   vec2 iResolution = resolution.xy;"+
+            //"   vec2 iResolution = 1.0/resolution.xy;"+
             "   vec2 pos = gl_FragCoord.xy;"+
             "   vec3 col = vec3(0);"+
             "   vec3 col2 = vec3(0);"+
@@ -112,11 +113,12 @@ public class GPUImageColorSketchFilter extends GPUImage3x3TextureSamplingFilter2
             "   karo-=.75755*vec3(.25,.1,.1)*dot(exp(-s*s*80.),vec2(1.));"+
             "   float r=length(pos-iResolution.xy*.5)/iResolution.x;"+
             "   float vign=1.-r*r*r;"+
-            "   gl_FragColor = vec4(vec3(col.x*col2*karo*vign ),1);"+
+            "   vec4 outCol = vec4(vec3(col.x*col2*karo*vign ),1);"+
             "   vec4 origCol = texture2D(inputImageTexture, textureCoordinate);"+
-            "   vec4 overlayColor = vec4(0.3755,0.05,0.0,0.0)*origCol;"+
-            "   gl_FragColor += vec4( setlum(1.25*overlayColor.rgb, lum(gl_FragColor.rgb)) * 1.0, 0.0);"+
-            "   gl_FragColor.rgb -= 0.75- clamp (origCol.r + origCol.g + origCol.b , 0.0 , 0.75);"+
+            "   vec4 overlayColor = vec4(0.3755,0.05,0.0,0.0)*outCol;"+
+            "   outCol += vec4( setlum(1.25*overlayColor.rgb, lum(gl_FragColor.rgb)) * 1.0, 0.0);"+
+            "   outCol.rgb -= 0.75- clamp (origCol.r + origCol.g + origCol.b , 0.0 , 0.75);"+
+            "   gl_FragColor = outCol;"+
             "}";
 
 

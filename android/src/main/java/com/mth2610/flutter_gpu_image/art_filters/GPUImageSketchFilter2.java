@@ -7,7 +7,7 @@ public class GPUImageSketchFilter2 extends GPUImage3x3TextureSamplingFilter2  {
             "precision highp float;" +
             "uniform sampler2D inputImageTexture;" +
             "varying vec2 textureCoordinate;" +
-
+            "varying vec2 resolution;" +
             "const float PI2 = float( 6.28318530717959 );"+
             "const float RANGE = float(16.0);"+
             "const float STEP = float(2.0);"+
@@ -56,7 +56,7 @@ public class GPUImageSketchFilter2 extends GPUImage3x3TextureSamplingFilter2  {
             "void main()" +
             "{" +
             "   vec2 pos = gl_FragCoord.xy;"+
-            "   vec2 iResolution = pos/textureCoordinate.xy;"+
+            "   vec2 iResolution = resolution;"+
             "   float weight = 1.0;"+
             "   for (float j = 0.0; j < ANGLENUM; j += 1.0)"+
             "   {"+

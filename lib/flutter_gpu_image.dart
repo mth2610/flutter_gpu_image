@@ -10,6 +10,12 @@ enum GPU_FILTER_TYPE{
 }
 
 enum GPU_FILTERS{
+    OldTVScreen,
+    BlendFilter, 
+    RainbowFilter,
+    FireFlies,
+    EdgeGlowFilter,
+    NippleEnchanter,
     Beauty,
     RadicalBlur,
     Fire,
